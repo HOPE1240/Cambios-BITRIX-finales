@@ -9,14 +9,20 @@
  * - Parámetros opcionales: fromRooms, toRooms, fromArea, toArea, fromPrice, toPrice.
  */
 
-// Configura la respuesta como JSON
+// Configura la respuesta como JSON y permite CORS
 header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Configuración Mobilia
-define('MOBILIA_AUTH_URL', 'http://54.145.54.14:8080/mobilia-test/ws/Auth');
-define('MOBILIA_BASE_URL', 'http://54.145.54.14:8080/mobilia-test/ws/Extra');
-define('MOBILIA_PROVIDER_KEY', '8492C616295D3CABC67FDF19DF547'); 
-define('JWT_CACHE_FILE', __DIR__ . '/jwt_token.txt');
+// Manejar preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Incluir configuración centralizada
+require_once __DIR__ . '/../config/config.php';
 
 /**
  * Obtiene el JWT y lo renueva si está vencido.
@@ -50,24 +56,65 @@ function getJwtToken() {
  * Valida obligatorios y agrega opcionales si existen.
  */
 function buildParams($input) {
+    // Mapear campos con nombres alternativos
+    $propertyTypeCode = $input['propertyTypeCode'] ?? $input['type'] ?? '';
+    $sectorCode = $input['sectorCode'] ?? $input['sector'] ?? '';
+    
     $params = [
         'operation' => 'getMatchingProperties',
-        'propertyTypeCode' => $input['propertyTypeCode'] ?? '',
-        'sectorCode' => $input['sectorCode'] ?? '',
+        'propertyTypeCode' => $propertyTypeCode,
+        'sectorCode' => $sectorCode,
         'forRent' => $input['forRent'] ?? 'T',
-        'onSale' => $input['onSale'] ?? 'F',
-        'branchCode' => $input['branchCode'] ?? 'OCCIDENTE'
+        'onSale' => $input['onSale'] ?? 'F'
     ];
-    // Opcionales
-    foreach (['fromRooms','toRooms','fromArea','toArea','fromPrice','toPrice'] as $key) {
-        if (!empty($input[$key])) $params[$key] = $input[$key];
+    
+    // Solo agregar branchCode si está especificado y no es "Todos"
+    if (!empty($input['branchCode']) && $input['branchCode'] !== 'Todos') {
+        $params['branchCode'] = $input['branchCode'];
+    } else if (!empty($input['branch']) && $input['branch'] !== 'Todos') {
+        $params['branchCode'] = $input['branch'];
     }
-    // Validación
-    if ($params['propertyTypeCode'] === '' || $params['sectorCode'] === '') {
+    
+    // Opcionales con mapeo alternativo
+    $optionalFields = [
+        'fromRooms' => ['fromRooms', 'rmin'],
+        'toRooms' => ['toRooms', 'rmax'],
+        'fromArea' => ['fromArea', 'amin'],
+        'toArea' => ['toArea', 'amax'],
+        'fromPrice' => ['fromPrice', 'pmin'],
+        'toPrice' => ['toPrice', 'pmax']
+    ];
+    
+    foreach ($optionalFields as $targetField => $sourceFields) {
+        foreach ($sourceFields as $sourceField) {
+            if (!empty($input[$sourceField])) {
+                $params[$targetField] = $input[$sourceField];
+                break; // Usar el primer campo encontrado
+            }
+        }
+    }
+    
+    // Validación mejorada
+    if (empty($propertyTypeCode)) {
         http_response_code(400);
-        echo json_encode(['error'=>'Faltan parámetros obligatorios: propertyTypeCode y/o sectorCode']);
+        echo json_encode([
+            'error' => 'Parámetro obligatorio faltante: propertyTypeCode/type',
+            'received' => array_keys($input),
+            'status' => false
+        ]);
         exit;
     }
+    
+    if (empty($sectorCode)) {
+        http_response_code(400);
+        echo json_encode([
+            'error' => 'Parámetro obligatorio faltante: sectorCode/sector',
+            'received' => array_keys($input),
+            'status' => false
+        ]);
+        exit;
+    }
+    
     return $params;
 }
 
@@ -90,23 +137,65 @@ function callMobiliaApi($params, $jwt) {
 }
 
 // --- BLOQUE PRINCIPAL ---
-$input = json_decode(file_get_contents('php://input'), true) ?: [];
+// Combinar parámetros GET y POST/JSON
+$rawInput = file_get_contents('php://input');
+$jsonInput = json_decode($rawInput, true) ?: [];
+$input = array_merge($_GET, $jsonInput);
 
-$params = buildParams($input); // Construye parámetros
-$jwt = getJwtToken();          // Obtiene JWT válido
-list($out, $http, $err, $url) = callMobiliaApi($params, $jwt); // Llama a Mobilia
+// Log para debugging (solo en desarrollo)
+error_log("API Input: " . json_encode($input));
 
-// Manejo de errores y respuesta
-if ($err || $http >= 400) {
-    http_response_code($http ?: 502);
+// Validar que se recibieron datos
+if (empty($input) || (empty($_GET) && empty($jsonInput))) {
+    http_response_code(400);
     echo json_encode([
-        'error'  => 'Error consultando servicio',
-        'detail' => $err,
-        'http'   => $http,
-        'url'    => $url
+        'error' => 'No se recibieron datos',
+        'method' => $_SERVER['REQUEST_METHOD'],
+        'content_type' => $_SERVER['CONTENT_TYPE'] ?? 'not set',
+        'raw_input_length' => strlen($rawInput),
+        'status' => false
     ]);
     exit;
 }
 
-http_response_code($http ?: 200);
-echo $out ?: json_encode(['error'=>'Sin respuesta del servicio']);
+try {
+    $params = buildParams($input); // Construye parámetros
+    $jwt = getJwtToken();          // Obtiene JWT válido
+    list($out, $http, $err, $url) = callMobiliaApi($params, $jwt); // Llama a Mobilia
+
+    // Manejo de errores y respuesta
+    if ($err || $http >= 400) {
+        http_response_code($http ?: 502);
+        echo json_encode([
+            'error'  => 'Error consultando servicio',
+            'detail' => $err,
+            'http'   => $http,
+            'url'    => $url,
+            'params' => $params,
+            'status' => false
+        ]);
+        exit;
+    }
+
+    // Intentar parsear la respuesta
+    $responseData = json_decode($out, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        // Si no es JSON válido, devolver la respuesta tal como está
+        http_response_code($http ?: 200);
+        echo $out ?: json_encode(['error'=>'Sin respuesta del servicio']);
+    } else {
+        // Es JSON válido, agregar información de estado
+        $responseData['status'] = true;
+        $responseData['statusCode'] = $http;
+        http_response_code($http ?: 200);
+        echo json_encode($responseData);
+    }
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'error' => 'Error interno del servidor',
+        'message' => $e->getMessage(),
+        'status' => false
+    ]);
+}

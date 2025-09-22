@@ -1,9 +1,11 @@
 /* Professional Corporate Design Variables */
 :root {
-    --primary-color: #1e40af;
-    --primary-dark: #1e3a8a;
-    --primary-light: #3b82f6;
-    --secondary-color: #64748b;
+    --primary-color: #1B5E88;
+    --primary-dark: #164a75;
+    --primary-light: #2870a0;
+    --secondary-color: #A4C73C;
+    --secondary-dark: #8fb532;
+    --secondary-light: #b5d149;
     --success-color: #059669;
     --warning-color: #d97706;
     --danger-color: #dc2626;
@@ -19,6 +21,8 @@
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
     --radius-lg: 0.75rem;
+    --gradient-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --gradient-accent: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
 }
 
 /* Reset and base styles */
@@ -54,6 +58,19 @@ body {
     border-radius: var(--radius-lg);
     margin-bottom: 32px;
     box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.app-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-accent);
+    z-index: 1;
 }
 
 .header-content {
@@ -347,7 +364,7 @@ input[data-price-input]:focus {
 }
 
 .search-btn {
-    background: var(--primary-color);
+    background: var(--gradient-accent);
     color: white;
     border: none;
     padding: 16px 32px;
@@ -363,7 +380,7 @@ input[data-price-input]:focus {
 }
 
 .search-btn:hover {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #133a5c 100%);
     transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
 }
@@ -573,6 +590,7 @@ input[data-price-input]:focus {
 @media (max-width: 768px) {
     .main-container {
         padding: 16px;
+        max-width: 100%;
     }
     
     .app-header {
@@ -590,6 +608,38 @@ input[data-price-input]:focus {
         width: 40px;
         height: 40px;
         font-size: 18px;
+    }
+    
+    .filter-row {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+    
+    .checkbox-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .search-btn {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+    
+    .filters-container {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .filters-container h2 {
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
     }
     
     .app-title h1 {
@@ -742,5 +792,187 @@ input[data-price-input]:focus {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+/* Estilos para inmuebles seleccionados */
+.property-card.selected {
+    border: 2px solid var(--secondary-color) !important;
+    background: linear-gradient(135deg, rgba(27, 94, 136, 0.05) 0%, rgba(164, 199, 60, 0.05) 100%) !important;
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(27, 94, 136, 0.15) !important;
+}
+
+.property-card.selected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid var(--secondary-color);
+    border-radius: inherit;
+    pointer-events: none;
+    animation: selectedGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes selectedGlow {
+    0% { box-shadow: 0 0 5px rgba(164, 199, 60, 0.3); }
+    100% { box-shadow: 0 0 20px rgba(164, 199, 60, 0.6); }
+}
+
+/* Indicador de selección */
+.selection-indicator {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    color: white !important;
+    padding: 8px !important;
+    border-radius: 50% !important;
+    font-size: 12px !important;
+    z-index: 10 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    animation: pulseSelected 1.5s ease-in-out infinite !important;
+}
+
+@keyframes pulseSelected {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Botones de eliminar en el panel de selecciones */
+.remove-selected {
+    background: #dc2626 !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.remove-selected:hover {
+    background: #b91c1c !important;
+    transform: scale(1.05) !important;
+}
+
+/* Panel de selecciones mejorado */
+.selected-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.selected-panel.show {
+    transform: translateX(0);
+}
+
+.selected-item {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 12px;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.selected-item:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+
+.selected-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.selected-item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+/* Notificaciones */
+.notification {
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Media queries adicionales para mejor responsive */
+@media (max-width: 992px) {
+    .filter-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    
+    .main-container {
+        max-width: 100%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .main-container {
+        padding: 12px;
+    }
+    
+    .filter-group input,
+    .filter-group select {
+        font-size: 16px; /* Evita zoom automático en iOS */
+        padding: 14px 16px;
+    }
+    
+    .app-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .app-title p {
+        font-size: 0.9rem;
+    }
+    
+    .checkbox-item {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .filter-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+}
+
+@media (max-width: 400px) {
+    .main-container {
+        padding: 8px;
+    }
+    
+    .filters-container {
+        padding: 12px;
+    }
+    
+    .app-header {
+        padding: 16px;
+    }
+    
+    .search-btn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
     }
 }
