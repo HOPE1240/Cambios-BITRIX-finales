@@ -1,5 +1,5 @@
 <?php
-// filepath: c:\xampp\htdocs\Bitix-Iframe\config\config.php
+// filepath: c:\xampp\htdocs\Bitrix-Iframe\config\config.php
 
 // URL base para las peticiones a la API de Mobilia
 define('MOBILIA_BASE_URL', 'http://54.145.54.14:8080/mobilia-test/ws/Extra');

@@ -1,5 +1,5 @@
 <?php
-// filepath: c:\xampp\htdocs\Bitix-Iframe\api\similares.php
+// filepath: c:\xampp\htdocs\Bitrix-Iframe\api\similares.php
 
 /**
  * Endpoint para consultar inmuebles similares usando JWT Mobilia.
