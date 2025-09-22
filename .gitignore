@@ -1,0 +1,31 @@
+# Archivos de configuración local
+config/config.php
+api/jwt_token.txt
+
+# Archivos temporales
+*.tmp
+*.log
+*.cache
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de editor
+*.swp
+*.swo
+*~
+
+# Directorios de dependencias
+node_modules/
+vendor/
+
+# Archivos de backup
+*.backup
+*.bak
+*_backup.*
+
+# Archivos de prueba
+test_*
+*_test.*
+debug_*
