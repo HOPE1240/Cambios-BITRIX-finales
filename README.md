@@ -1,7 +1,7 @@
 # 🏠 Sistema de Inmuebles Similares - Bitrix24 CRM Integration
 
 <div align="center">
-  <img src="https://via.placeholder.com/200x100/1B5E88/FFFFFF?text=ACRECER" alt="Acrecer Logo" width="200"/>
+  <img src="./assets/acrecer-logo.png" alt="Acrecer Logo" width="200"/>
   
   [![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=flat-square)](https://github.com/HOPE1240/Cambios-BITRIX-finales)
   [![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=flat-square)](https://github.com/HOPE1240/Cambios-BITRIX-finales)
