@@ -1,7 +1,7 @@
-# 🏠 Sistema de Inmuebles Similares - Bitrix24 CRM Integration
+#  Sistema de Inmuebles Similares - Bitrix24 CRM Integration
 
 <div align="center">
-  <img src="https://via.placeholder.com/200x100/1B5E88/FFFFFF?text=ACRECER" alt="Acrecer Logo" width="200"/>
+  
   
   [![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=flat-square)](https://github.com/HOPE1240/Cambios-BITRIX-finales)
   [![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=flat-square)](https://github.com/HOPE1240/Cambios-BITRIX-finales)
@@ -10,11 +10,11 @@
 
 ---
 
-## 📋 Descripción Ejecutiva
+##  Descripción Ejecutiva
 
 **Sistema de Inmuebles Similares** es una aplicación web profesional desarrollada específicamente para el equipo de **arrendamientos** de Acrecer, integrada nativamente con **Bitrix24 CRM**. La aplicación permite buscar y seleccionar propiedades similares directamente desde las negociaciones de CRM, optimizando el proceso comercial y mejorando la experiencia del asesor.
 
-### 🎯 Objetivos del Sistema
+###  Objetivos del Sistema
 - **Eficiencia Operacional**: Reducir tiempo de búsqueda de inmuebles similares
 - **Integración Nativa**: Funcionar como pestaña dentro del CRM de Bitrix24
 - **Especialización**: Orientado exclusivamente al equipo de arrendamientos
@@ -22,7 +22,7 @@
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+##  Arquitectura del Sistema
 
 ### Componentes Principales
 
@@ -70,7 +70,7 @@ Bitrix-Iframe/
 └── README.md             # Este archivo
 ```
 
-### 🔑 Archivos Principales
+###  Archivos Principales
 
 #### **toolbar.php** - Aplicación Principal
 - Interfaz completa para búsqueda de inmuebles
@@ -96,22 +96,22 @@ define('JWT_TOKEN_FILE', 'path/to/jwt_token.txt');
 ?>
 ```
 
-### 🔍 **Motor de Búsqueda Avanzado**
+###  **Motor de Búsqueda Avanzado**
 - Filtros múltiples: tipo, sector, habitaciones, área, precio
 - Búsqueda en tiempo real con API de producción
 - Validación de parámetros y manejo de errores
 
-### 🎨 **Interfaz de Usuario**
+###  **Interfaz de Usuario**
 - Diseño responsive con colores corporativos Acrecer
 - Experiencia optimizada para uso en iframe
 - Interfaz intuitiva con feedback visual inmediato
 
-### 🔐 **Seguridad y Autenticación**
+###  **Seguridad y Autenticación**
 - Autenticación JWT automática con renovación
 - Headers CORS configurados para iframe
 - Validación de permisos en Bitrix24
 
-### 📊 **Gestión de Selecciones**
+###  **Gestión de Selecciones**
 - Selección múltiple de inmuebles
 - Preview de selecciones en tiempo real
 - Guardado automático en localStorage
@@ -119,7 +119,7 @@ define('JWT_TOKEN_FILE', 'path/to/jwt_token.txt');
 
 ---
 
-## 🚀 Guía de Instalación
+##  Guía de Instalación
 
 ### Opción A: Desarrollo Local con Ngrok
 
@@ -190,7 +190,7 @@ ngrok http 80
 # Esta será tu URL base para la configuración
 ```
 
-### Paso 2: Instalar en Bitrix24 (¡Solo 3 pasos!)
+### Paso 2: Instalar en Bitrix24 
 
 1. **Crear Aplicación en Market**:
    - Ir a **Market** → **Desarrolladores** → **Crear Aplicación**
@@ -208,21 +208,21 @@ BX24.callMethod('placement.bind', {
     if (result.error()) {
         alert('Error: ' + result.error().error_description);
     } else {
-        alert('✅ ¡Configurado! Ve a cualquier deal → pestaña "Inmuebles Similares"');
+        alert(' ¡Configurado! Ve a cualquier deal → pestaña "Inmuebles Similares"');
     }
 });
 ```
 
 3. **¡Listo!** - Ve a cualquier deal en CRM → Nueva pestaña "Inmuebles Similares"
 
-### 📝 Notas Importantes:
+###  Notas Importantes:
 - **Solo cambiar**: `TU-URL-NGROK` por tu URL real de ngrok
 - **Guardar cambios** en Git después de verificar que funciona
 - **Reiniciar ngrok**: Si cambias de sesión, repetir paso 2 con nueva URL
 
 ---
 
-## � Manual de Usuario
+##  Manual de Usuario
 
 ### Acceso a la Aplicación
 1. **Navegar a CRM** → **Negocios** en Bitrix24
@@ -231,25 +231,25 @@ BX24.callMethod('placement.bind', {
 
 ### Realizar Búsquedas
 1. **Configurar Filtros**:
-   - 🏠 **Tipo de Propiedad**: Apartamento, Casa, Oficina, etc.
-   - 📍 **Sector**: Campo obligatorio (ej: "Poblado", "Centro")
-   - 🛏️ **Habitaciones**: Rango mínimo y máximo
-   - 📐 **Área**: Metros cuadrados (min/max)
-   - 💰 **Precio**: Rango de precios de arriendo
+   -  **Tipo de Propiedad**: Apartamento, Casa, Oficina, etc.
+   -  **Sector**: Campo obligatorio (ej: "Poblado", "Centro")
+   -  **Habitaciones**: Rango mínimo y máximo
+   -  **Área**: Metros cuadrados (min/max)
+   -  **Precio**: Rango de precios de arriendo
 
-2. **Ejecutar Búsqueda**: Clic en "🔍 Buscar Inmuebles Similares"
+2. **Ejecutar Búsqueda**: Clic en " Buscar Inmuebles Similares"
 
 3. **Revisar Resultados**: Lista de propiedades con detalles completos
 
 ### Gestión de Selecciones
 1. **Seleccionar Inmuebles**: Clic en "Seleccionar" en cada propiedad
 2. **Revisar Selecciones**: Panel automático con resumen
-3. **Enviar a Bitrix24**: Clic en "📤 Enviar Selecciones"
+3. **Enviar a Bitrix24**: Clic en " Enviar Selecciones"
 4. **Verificar**: Comentario automático en timeline del deal
 
 ---
 
-## 🔄 Flujo de Datos
+##  Flujo de Datos
 
 ### Proceso de Búsqueda
 ```
@@ -276,24 +276,24 @@ BX24.callMethod('placement.bind', {
 
 ---
 
-## �️ Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 Bitrix-Iframe/
-├── 📄 README.md                      # Esta documentación
-├── ⚙️ config/
+├──  README.md                      # Esta documentación
+├──  config/
 │   └── config.php                    # Configuración centralizada
-├── 🌐 public/                        # Archivos públicos
+├──  public/                        # Archivos públicos
 │   ├── index.php                     # Aplicación principal
 │   ├── toolbar_clean.php             # Manejador de placement
 │   └── assets/                       # Recursos estáticos
 │       ├── app.js                    # JavaScript principal
 │       ├── modern-style.css          # Estilos personalizados
 │       └── modal.css                 # Estilos de modales
-├── 🔌 api/                           # API local
+├──  api/                           # API local
 │   ├── similares.php                 # Proxy a API Acrecer
 │   └── jwt_token.txt                 # Cache de token (auto-generado)
-└── 📚 documentación/                 # Documentación adicional
+└──  documentación/                 # Documentación adicional
     ├── INSTALACION_PLACEMENT.md
     ├── INTEGRACION_BITRIX24.md
     └── FLUJO_DATOS.md
@@ -301,7 +301,7 @@ Bitrix-Iframe/
 
 ---
 
-## �️ Configuración Avanzada
+##  Configuración Avanzada
 
 ### Variables de Entorno
 ```php
@@ -327,7 +327,7 @@ header('Access-Control-Allow-Origin: *');
 
 ---
 
-## 🔍 Solución de Problemas
+##  Solución de Problemas
 
 ### Problemas Comunes
 
@@ -371,7 +371,7 @@ console.log('Selecciones:', localStorage.getItem('selectedProperties'));
 
 ---
 
-## 📊 Métricas y Monitoreo
+##  Métricas y Monitoreo
 
 ### KPIs del Sistema
 - **Tiempo promedio de búsqueda**: < 3 segundos
@@ -387,7 +387,7 @@ console.log('Selecciones:', localStorage.getItem('selectedProperties'));
 
 ---
 
-## 🔐 Seguridad
+##  Seguridad
 
 ### Medidas Implementadas
 - **Autenticación JWT** con renovación automática
@@ -404,7 +404,7 @@ console.log('Selecciones:', localStorage.getItem('selectedProperties'));
 
 ---
 
-## 🤝 Soporte y Mantenimiento
+##  Soporte y Mantenimiento
 
 ### Contacto Técnico
 - **Desarrollador**: Equipo de Desarrollo Acrecer
@@ -423,7 +423,7 @@ console.log('Selecciones:', localStorage.getItem('selectedProperties'));
 
 ---
 
-## 📈 Roadmap y Mejoras Futuras
+##  Roadmap y Mejoras Futuras
 
 ### Versión 1.1 (Q4 2025)
 - [ ] Dashboard de métricas de uso
@@ -439,7 +439,7 @@ console.log('Selecciones:', localStorage.getItem('selectedProperties'));
 
 ---
 
-## 📄 Licencia y Términos
+##  Licencia y Términos
 
 Este sistema es de **uso exclusivo interno** de Acrecer para integración con Bitrix24 CRM y API Mobilia. No está autorizado el uso, distribución o modificación sin autorización expresa.
 
@@ -448,7 +448,7 @@ Este sistema es de **uso exclusivo interno** de Acrecer para integración con Bi
 ---
 
 <div align="center">
-  <strong>✅ Sistema en Producción | 🔧 Mantenimiento Activo | 📈 Optimización Continua</strong>
+  <strong> Sistema en Producción |  Mantenimiento Activo |  Optimización Continua</strong>
   
   ---
   
@@ -456,3 +456,4 @@ Este sistema es de **uso exclusivo interno** de Acrecer para integración con Bi
   
   *Última actualización: Septiembre 2025*
 </div>
+
