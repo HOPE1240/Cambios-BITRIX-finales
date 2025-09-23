@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Búsqueda de Inmuebles Similares - Acrecer</title>
     
-    <!-- Librerías externas necesarias para el proyecto -->
+    <!-- CDNs que uso siempre para estos proyectos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Inter font - se ve más profesional que la default -->
+    <!-- La fuente Inter me gusta más que Arial -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Nuestros estilos customizados -->
+    <!-- Los CSS que hice yo -->
     <link rel="stylesheet" href="assets/style.css">
     <link rel="stylesheet" href="assets/modal.css">
     
@@ -21,18 +21,19 @@
         /* Variables de colores corporativos Acrecer - tomé estos del manual de marca */
         :root {
             --primary-color: #005D83;      /* Azul principal Acrecer */
-            --primary-light: #0074a3;     /* Versión más clara para hovers */
-            --primary-dark: #004663;      /* Para elementos que necesitan más contraste */
+            --primary-light: #0074a3;     /* Un poco más claro para hover */
+            --primary-dark: #004663;      /* Más oscuro para resaltar */
             --secondary-color: #B6BD00;   /* Verde corporativo - medio raro pero así lo pidieron */
-            --success-color: #48bb78;     /* Para mensajes de éxito */
-            --danger-color: #e53e3e;      /* Para errores */
-            --warning-color: #ed8936;     /* Para warnings */
+            --success-color: #48bb78;     /* Verde para success */
+            --danger-color: #e53e3e;      /* Rojo para errores */
+            --warning-color: #ed8936;     /* Naranja para advertencias */
             --surface-color: #ffffff;
-            --background-color: #f8fafc;
+            --background-color: #f8fafc;  /* Gris muy clarito de fondo */
             --border-color: #e2e8f0;
             --text-primary: #2d3748;
             --text-secondary: #4a5568;
             --text-muted: #718096;
+            /* Sombras que quedaron bonitas después de varios intentos */
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
@@ -41,6 +42,7 @@
             --radius-lg: 12px;
         }
 
+        /* Reset básico que siempre uso */
         * {
             margin: 0;
             padding: 0;
@@ -60,7 +62,7 @@
             padding: 20px;
         }
 
-        /* Header profesional */
+        /* Header bonito con gradiente que me quedó genial */
         .app-header {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
             color: white;
@@ -1223,7 +1225,7 @@
             return value.replace(/\./g, '');
         }
 
-        // Event listeners para formateo de precios
+        // Para que los precios se vean bonitos con puntos
         document.getElementById('pmin').addEventListener('input', function(e) {
             e.target.value = formatPrice(e.target.value);
         });
@@ -1232,17 +1234,18 @@
             e.target.value = formatPrice(e.target.value);
         });
 
-        // Manejo de checkboxes visuales
+        // Esto hace que los checkboxes se vean chéveres al hacer click
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.checkbox-item').forEach(item => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
                 
-                // Estado inicial
+                // Si ya está marcado, le pongo la clase
                 if (checkbox.checked) {
                     item.classList.add('checked');
                 }
                 
                 item.addEventListener('click', function(e) {
+                    // Solo si no hicieron click en el checkbox mismo
                     if (e.target.type !== 'checkbox') {
                         checkbox.checked = !checkbox.checked;
                     }
@@ -1256,7 +1259,7 @@
             });
         });
 
-        // Función para mostrar estado
+        // Para mostrar mensajes de estado mientras carga
         function showStatus(message, type = 'loading') {
             statusEl.style.display = 'block';
             statusEl.className = `status ${type}`;
@@ -1267,22 +1270,34 @@
             statusEl.style.display = 'none';
         }
 
-        // Función para mostrar resultados - basada en el repositorio
-        function render(list) {
-            resultsEl.innerHTML = '';
-            resultsEl.style.display = 'block'; // Mostrar el contenedor de resultados
+        // Helper para debuggear - no borrar
+        function logearBusqueda(query, resultados) {
+            if (window.location.href.includes('debug=1')) {
+                console.log('=== DEBUG BÚSQUEDA ===');
+                console.log('Query:', query);
+                console.log('Resultados encontrados:', resultados?.length || 0);
+                console.log('Primer resultado:', resultados?.[0]);
+                console.log('=====================');
+            }
+        }
 
+        // Esta función pinta todos los resultados que encuentra
+        function mostrarResultados(list) {
+            resultsEl.innerHTML = '';
+            resultsEl.style.display = 'block'; // Mostrar la sección de resultados
+
+            // Si no encontró nada, muestro un mensaje bonito
             if (!list.length) {
                 resultsEl.innerHTML = `
                     <div style="text-align: center; padding: 60px 20px; color: #718096; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
                         <div style="font-size: 3rem; margin-bottom: 20px;"><i class="fas fa-search"></i></div>
-                        <h3 style="color: #2d3748; margin-bottom: 12px;">No encontramos coincidencias exactas</h3>
-                        <p style="margin-bottom: 16px;"><strong>Sugerencias para mejorar tu búsqueda:</strong></p>
+                        <h3 style="color: #2d3748; margin-bottom: 12px;">No encontré nada que coincida</h3>
+                        <p style="margin-bottom: 16px;"><strong>Podrías intentar:</strong></p>
                         <ul style="text-align: left; display: inline-block; color: #4a5568;">
-                            <li>Prueba con un tipo de propiedad diferente</li>
-                            <li>Amplía el área de búsqueda o cambia el sector</li>
-                            <li>Ajusta el rango de precio</li>
-                            <li><i class="fas fa-bed"></i> Modifica el número de habitaciones</li>
+                            <li>Cambiar el tipo de propiedad</li>
+                            <li>Buscar en otro sector</li>
+                            <li>Ajustar el precio</li>
+                            <li><i class="fas fa-bed"></i> Probar con más o menos habitaciones</li>
                         </ul>
                     </div>
                 `;
@@ -1290,9 +1305,9 @@
             }
 
             const header = document.createElement('div');
-            const successMessage = list.length === 1 ? 
-                'Encontramos 1 inmueble que coincide con los criterios de tu cliente' :
-                `Encontramos ${list.length} inmuebles perfectos para las necesidades de tu cliente`;
+            const mensajito = list.length === 1 ? 
+                'Encontré 1 inmueble que le puede servir a tu cliente' :
+                `Encontré ${list.length} inmuebles que podrían funcionar`;
             
             header.innerHTML = `
                 <div style="background: linear-gradient(135deg, var(--secondary-color) 0%, #9aa600 100%); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 20px rgba(182, 189, 0, 0.3);">
@@ -1472,7 +1487,7 @@
                     showNotification('No se encontraron inmuebles con los criterios especificados', 'warning');
                 }
                 
-                render(properties);
+                mostrarResultados(properties);
                 setTimeout(hideStatus, 3000);
 
             } catch (error) {
@@ -1486,21 +1501,21 @@
             }
         }
 
-        // Event listener del formulario
+        // Cuando envían el formulario hago toda la magia aquí
         searchForm.addEventListener('submit', function(e) {
-            console.log('Formulario enviado - event listener ejecutado');
+            console.log('Usuario envió el form');
             e.preventDefault();
 
-            // Función para construir el payload basada en el repositorio
+            // Armo toda la data que necesito enviar al servidor
             function buildPayload() {
-                console.log('Construyendo payload...');
+                console.log('Armando el payload...');
                 const getValue = sel => (document.querySelector(sel)?.value || '').trim();
                 const getChecked = sel => document.querySelector(sel)?.checked;
 
-                // Mapeo de campos del formulario a payload
+                // La estructura que espera el backend
                 const payload = { operation: 'getMatchingProperties' };
 
-                // Campos de texto y selectores
+                // Todos los campos de texto y select que tengo en el form
                 const textFields = [
                     ['#type', 'propertyTypeCode'],
                     ['#sector', 'sectorCode'],
@@ -1511,7 +1526,7 @@
                     ['#amax', 'toArea']
                 ];
 
-                // Campos de precio - usar función especial para desformatear
+                // Los precios van por separado porque hay que limpiarles el formato
                 const priceFields = [
                     ['#pmin', 'fromPrice'], 
                     ['#pmax', 'toPrice']
@@ -1527,7 +1542,7 @@
                         const branchValue = getValue('#branch');
                         if (branchValue && branchValue !== 'Todos') {
                             payload[key] = ''; // Enviar sector vacío cuando hay sucursal específica
-                            console.log('Sucursal específica seleccionada, enviando sectorCode vacío');
+                            console.log('Como eligieron sucursal específica, no envío sector');
                         } else if (val === '') {
                             // Si no hay sucursal específica y el sector está vacío, no incluir
                             // (esto será capturado por la validación más adelante)
@@ -1546,7 +1561,7 @@
                 payload.forRent = 'T'; // Siempre T para arriendo
                 payload.onSale = 'F';  // Siempre F para venta
                 
-                console.log('Payload construido:', payload);
+                console.log('Payload listo:', payload);
                 return payload;
             }
 
@@ -1567,7 +1582,7 @@
                 return;
             }
 
-            console.log('Datos de búsqueda (modo arriendo):', apiData);
+            console.log('Datos que voy a enviar (modo arriendo):', apiData);
             searchProperties(apiData);
         });
 
@@ -1749,16 +1764,17 @@
             }, 300);
         }
 
-        // Funciones de selección y gestión de propiedades
-        function updateSelectedSummary() {
+        // Para manejar las propiedades que el usuario va seleccionando
+        function actualizarResumen() {
             const summarySection = document.getElementById('selectedSummary');
             const summaryCount = document.getElementById('summaryCount');
             const summaryList = document.getElementById('selectedSummaryList');
             
-            console.log('Actualizando resumen. Propiedades seleccionadas:', selectedProperties.length);
+            console.log('Actualizando lista. Seleccionadas:', selectedProperties.length);
             
+            // Si no encuentra los elementos del DOM algo está muy mal
             if (!summarySection || !summaryCount || !summaryList) {
-                console.error('No se encontraron elementos DOM para el resumen');
+                console.error('No encontré los elementos del resumen en el DOM');
                 return;
             }
             
@@ -1766,6 +1782,7 @@
                 summarySection.style.display = 'block';
                 summaryCount.textContent = selectedProperties.length;
                 
+                // Genero el HTML para cada propiedad seleccionada
                 const summaryHTML = selectedProperties.map((property, index) => `
                     <div class="summary-item" data-property-index="${index}">
                         <strong>${property.type || 'N/A'}</strong> • ${property.sector || 'N/A'}<br>
@@ -1797,7 +1814,7 @@
             
             saveSelections();
             updatePropertyCards();
-            updateSelectedSummary(); // Mostrar la lista actualizada
+            actualizarResumen(); // Mostrar la lista actualizada
             showNotification(`${propertyData.type} seleccionado exitosamente`, 'success');
         }
 
@@ -2055,7 +2072,7 @@
                     selectedProperties = selectedProperties.filter(p => p.code !== propertyCode);
                     saveSelections();
                     updatePropertyCards(); // Update cards visual state
-                    updateSelectedSummary(); // Update summary section
+                    actualizarResumen(); // Actualizo el resumen
                     
                     // Si no quedan propiedades seleccionadas, cerrar el modal
                     if (selectedProperties.length === 0) {
@@ -2080,7 +2097,7 @@
                     console.log('Después de limpiar:', selectedProperties.length);
                     
                     saveSelections();
-                    updateSelectedSummary(); // Actualizar la vista de inmuebles seleccionados
+                    actualizarResumen(); // Actualizar la vista de inmuebles seleccionados
                     updatePropertyCards(); // Actualizar el estado visual de las tarjetas
                     closeDetailsModal(); // Cerrar modal ya que no hay propiedades
                     showNotification('Todas las selecciones han sido limpiadas', 'success');
@@ -2120,7 +2137,7 @@
         function clearCache() {
             localStorage.removeItem('selectedProperties');
             selectedProperties = [];
-            updateSelectedSummary();
+            actualizarResumen();
             updatePropertyCards();
             showNotification('Cache limpiado correctamente', 'success');
         }
@@ -2139,7 +2156,7 @@
         window.debugApp = {
             selectedProperties: () => selectedProperties,
             clearCache: clearCache,
-            updateSummary: updateSelectedSummary,
+            updateSummary: actualizarResumen,
             updateCards: updatePropertyCards,
             info: debugInfo  // por si acaso la necesito después
         };
@@ -2147,7 +2164,7 @@
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {
             console.log('App lista. Propiedades guardadas:', selectedProperties.length);
-            updateSelectedSummary();
+            actualizarResumen();
             updatePropertyCards();
             initializeSectorAutocomplete();
         });
