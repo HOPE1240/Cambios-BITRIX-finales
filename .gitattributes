@@ -1,4 +1,0 @@
-# Evitar detección incorrecta de Hack
-public/toolbar.php linguist-language=PHP
-api/similares.php linguist-language=PHP
-config/config.php linguist-language=PHP

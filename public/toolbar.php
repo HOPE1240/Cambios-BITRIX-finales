@@ -18,12 +18,12 @@
     <link rel="stylesheet" href="assets/modal.css">
     
     <style>
-        /* Variables de colores corporativos Acrecer - definidas después de varias iteraciones con el equipo */
+        /* Variables de colores corporativos Acrecer - tomé estos del manual de marca */
         :root {
             --primary-color: #005D83;      /* Azul principal Acrecer */
             --primary-light: #0074a3;     /* Versión más clara para hovers */
             --primary-dark: #004663;      /* Para elementos que necesitan más contraste */
-            --secondary-color: #B6BD00;   /* Verde corporativo Acrecer */
+            --secondary-color: #B6BD00;   /* Verde corporativo - medio raro pero así lo pidieron */
             --success-color: #48bb78;     /* Para mensajes de éxito */
             --danger-color: #e53e3e;      /* Para errores */
             --warning-color: #ed8936;     /* Para warnings */
@@ -2125,40 +2125,42 @@
             showNotification('Cache limpiado correctamente', 'success');
         }
 
+        // Esta función no la uso pero me daba pereza borrarla
+        function debugInfo() {
+            console.log('Propiedades seleccionadas:', selectedProperties.length);
+            console.log('Sectores disponibles:', SECTORES_COMPLETOS.length);
+            return {
+                selected: selectedProperties,
+                sectors: SECTORES_COMPLETOS
+            };
+        }
+
         // Agregar función al objeto window para debugging
         window.debugApp = {
             selectedProperties: () => selectedProperties,
             clearCache: clearCache,
             updateSummary: updateSelectedSummary,
-            updateCards: updatePropertyCards
+            updateCards: updatePropertyCards,
+            info: debugInfo  // por si acaso la necesito después
         };
 
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Aplicación iniciada. Propiedades seleccionadas guardadas:', selectedProperties.length);
+            console.log('App lista. Propiedades guardadas:', selectedProperties.length);
             updateSelectedSummary();
             updatePropertyCards();
             initializeSectorAutocomplete();
         });
 
-        // Base de datos de sectores de Colombia - compilada manualmente desde diferentes fuentes
-        // Incluye sectores de Medellín, Envigado, Sabaneta, Itagüí, Caldas, Bello, etc.
-        // TODO: Eventualmente migrar esto a una BD externa para mejor mantenimiento
-        const SECTORES_COMPLETOS = [
-            // Poblado y sectores aledaños
-            'POBLADO', 'SAN DIEGO', 'NUEVO POBLADO', 'CASTROPOL', 'MANILA', 'PROVENZA', 
-            'PATIO BONITO', 'LAS LOMAS', 'ALEJANDRIA', 'LOS PARRA', 'LOS BALSOS', 
-            'SANTA MARIA DE LOS ANGELES', 'LA FRONTERA M', 'EL CAMPESTRE', 'LOS GONZALEZ',
-            // Laureles y sectores cercanos
-            'LAURELES', 'ESTADIO', 'LA CASTELLANA', 'LAS ACACIAS', 'LOS CONQUISTADORES', 
-            'SAN JOAQUÍN', 'BOLIVARIANA', 'LORENA', 'EL VELÓDROMO', 'FLORIDA NUEVA',
-            // El resto de sectores (mantenemos el array original pero con mejor formato)
-            'LA COLA DEL ZORRO', 'LA CONCHA', 'EL TESORO', 'SAN LUCAS', 'OVIEDO', 'TRANSVERSAL INFERIOR', 'TRANSVERSAL SUPERIOR', 'INTERCONTINENTAL', 'MILLA DE ORO', 'LOMA DE LOS PARRAS', 'BARRIO COLOMBIA', 'COLINA CAMPESTRE M', 'CARIBE', 'INDUSTRIALES', 'LAS PALMAS M', 'CHAGUALO', 'LA AGUACATALA', 'LA TOMATERA', 'LAS SANTAS', 'LA CALERA', 'LOMA DEL INDIO', 'LA ASOMADERA', 'TRANSVERSAL INTERMEDIA', 'LALINDE', 'ASTORGA', 'VIZCAYA', 'SAN JULIAN', 'ALTOS DEL POBLADO', 'CANTIZAL', 'DOMINIO INMOBILIARIO', 'AVENIDA LAS VEGAS', 'La Visitación', 'NARANJAL', 'SURAMERICANA', 'LOS COLORES', 'LA CUARTA BRIGADA', 'CARLOS E. RESTREPO', 'VELODROMO', 'MANZANARES', 'SAN PABLO', 'FLORESTA', 'SAN GERMAN', 'SANTA MONICA', 'ÉXITO COLOMBIA', 'NUEVA VILLA ABURRA', 'BARRIO CORDOBA', 'ALMERIA', 'SAN JUAQUIN', 'UNICENTRO', 'LA TABLAZA', 'AMERICA NIZA', 'CORTIJO', 'LA CAMPAÑA', 'LA ALPUJARRA', 'SANTA TERESITA', 'FERRINI', 'CALASANZ PARTE ALTA', 'SIMÓN BOLÍVAR', 'BARRIO CRISTÓBAL', 'SANTA MÓNICA', 'CAMPO ALEGRE', 'EL DANUBIO', 'SANTA LUCÍA', 'LA FLORESTA', 'LA AMÉRICA', 'LOS OLIVOS', 'LOS PINOS', 'CALASANZ', 'SANTA MONICA N°1', 'SANTA MONICA N°2', 'FÁTIMA', 'ROSALES', 'BELEN', 'GRANADA', 'SAN BERNARDO', 'LAS PLAYAS', 'DIEGO ECHAVARRÍA', 'LA MOTA', 'LA HONDONADA', 'EL RINCÓN', 'LOMA DE LOS BERNAL', 'LA GLORIA', 'ALTAVISTA', 'LA PALMA', 'LOS ALPES', 'LAS VIOLETAS', 'LAS MERCEDES', 'NUEVA VILLA DEL ABURRÁ', 'MIRAVALLE', 'NOGAL LOS ALMENDROS', 'CERRO NUTIBARA', 'RODEO', 'ALAMEDA', 'ALIADAS', 'MALIBU', 'LA NUBIA', 'RODEO ALTO', 'GUAYABAL', 'MAYORCA', 'CRISTO REY', 'SANTA FE', 'ZONA INDUSTRIAL DE BELEN', 'LA COLINITA', 'CAMPO AMOR', 'EL PESEBRE', 'BLANQUIZAL', 'SANTA ROSA DE LIMA', 'LOS ALCÁZARES', 'METROPOLITANO', 'LA PRADERA', 'JUAN XXIII', 'ANTONIO NARIÑO', 'SAN JAVIER N.º 1', 'SAN JAVIER N.º 2', 'VEINTE DE JULIO', 'EL SALADO', 'NUEVOS CONQUISTADORES', 'LAS INDEPENDENCIAS', 'EL CORAZÓN', 'BELENCITO', 'BETANIA', 'EDUARDO SANTOS', 'EL SOCORRO', 'Andalucía ', 'ENVIGADO', 'LAS VEGAS', 'EL PORTAL', 'SAN MARCOS', 'PONTEVEDRA', 'JARDINES', 'VILLAGRANDE', 'LA SEBASTIANA', 'EL ESCOBERO', 'LAS FLORES', 'URIBE ÁNGEL', 'ALTO DE MISAEL', 'LAS ORQUÍDEAS', 'EL ESMERALDAL', 'LOMA EL ATRAVEZADO', 'ZUÑIGA', 'LOMA DE LAS BRUJAS', 'EL CHOCHO', 'LA INMACULADA', 'EL CHINGUÍ', 'LA MINA', 'SAN RAFAEL', 'LAS ANTILLAS', 'EL TRIANÓN', 'LOMA DEL BARRO', 'LA PAZ', 'LAS CASITAS', 'PRIMAVERA', 'MILÁN', 'VALLEJUELOS', 'ALCALÁ', 'EL DORADO', 'SAN JOSÉ', 'LOS NARANJOS', 'BARRIO MESA', 'ZONA CENTRO', 'BARRIO OBRERO', 'LA FRONTERA', 'BUCAREST', 'CUMBRES', 'CAMINO VERDE', 'LA SALLE', 'LA MAGNOLIA', 'LOMA DE LOS BENEDICTINOS', 'LA AVADIA', 'LOMA DEL ATRAVESADO', 'LOMA DEL CHOCHO', 'ACANTO', 'OTRA PARTE', 'GUALANDAYES', 'CENTRO DE ENVIGADO', 'LA FE', 'LA FLORIDA', 'EL GUÁIMARO', 'EL CONSUELO', 'LAS COMETAS', 'SEÑORIAL', 'SAN JOSE LAS ESTATUA', 'LOMA DE LOS MESA', 'Loma El Atravesado', 'Loma Del Escobero', 'Loma Benedictinos', 'La Catedral', 'La Abadia', 'La Cuenca', 'Loma Del Esmeraldal', 'Alto De Palmas', 'Oasis', 'MALL LA SEBASTIANA', 'MANGAZUL', 'Abadia', 'ALTO DE LAS FLORES', 'VEREDA LAS BRISAS', 'MARÍA AUXILIADORA', 'LAS LOMITAS', 'LA DOCTORA', 'CAÑAVERALEJO', 'PAN DE AZÚCAR', 'SABANETA', 'Villa del Carmen', 'Vereda CaÑaveralejo', 'Vereda San Jose', 'Loma San Jose', 'San Remo', 'Vereda Las Lomitas', 'Callejon Del Banco', 'ALIADAS DEL SUR', 'ANCON SUR', 'CALLE DEL BANCO', 'CALLE LARGA', 'EL CARMELO', 'ENTREAMIGOS', 'HOLANDA', 'LA BARQUEREÑA', 'LAGOS DE LA DOCTORA', 'LOS ALCAZARES', 'LOS ARIAS', 'MANUEL RESTREPO', 'MARIA AUXILIADORA', 'PAN DE AZUCAR', 'PASO ANCHO', 'PLAYAS DE MARÍA', 'PRADOS DE SABANETA', 'PROMISIÓN', 'RESTREPO NARANJO', 'SABANETA REAL', 'SAN JOAQUIN', 'SAN JOSE', 'SANTA ANA', 'TRES ESQUINAS', 'VEGAS DE LA DOCTORA', 'VEGAS DE SAN JOSE', 'VILLAS DEL CARMEN', 'VIRGEN DEL CARMEN', 'ZONA INDUSTRIAL ', 'LA INDEPENDENCIA', 'SAN JUAN BAUTISTA', 'ARAUCARIA', 'CENTRO', 'ASTURIAS', 'VILLA PAULA', 'ARTEX', 'PLAYA RICA', 'SATEXCO', 'SAN ISIDRO', 'LA SANTA CRUZ ', 'SANTA CATALINA', 'SAMARIA', 'LA FINCA', 'YARUMITO', 'EL PALMAR', 'LAS MARGARITAS', 'MALTA', 'GLORIETA PILSEN', 'MONTE VERDE', 'CAMPAROLA', 'SAN PIO X', 'LA PALAMA', 'JARDINES MONTESACRO', 'LAS BRISAS', 'PILSEN', 'SAN JAVIER', 'VILLA LIA', '19 DE ABRIL', 'SAN GABRIEL', 'SAN ANTONIO', 'TRIANA', 'DITAIRES', 'SAN FRANCISCO', 'SANTA MARIA ', 'COLINAS DEL SUR', 'CENTRAL MAYORISTA', 'SAN FERNANDO', 'LA RAYA (GUAYABAL)', 'LAS AMÉRICAS', 'EL TABLAZO', 'CALATRAVA', 'LOMA LINDA', 'TERRANOVA', 'LA ALDEA', 'FERRARA', 'BALCONES DE SEVILLA', 'EL ROSARIO', 'LA UNIÓN', 'SANTA MARÍA LA NUEVA', 'ITAGUI', 'BARILOCHE', 'VIVIENDAS DEL SUR', 'LA ESMERALDA', 'GUAYABALÍA', 'VILLA VENTURA', 'EL GUAYABO', 'ASDESILLAS', 'Centro De La Moda', 'Suramérica', 'ANCÓN SAN MARTÍN', 'VILLA ALICIA ', 'VILLA MIRA', 'BELLAVISTA', 'CAMILO TORRES', 'CAQUETA', 'CHILE', 'EL PEDRERO', 'ESCOBAR', 'HORIZONTES', 'LA CHINCA', 'LA FERREIRA', 'LA FERRERIA', 'LA OSPINA', 'MONTERREY', 'QUEBRADA GRANDE', 'SAN AGUSTÍN', 'SAN ANDRES', 'SAN CAYETANO', 'SAN VICENTE', 'ZONA INDUSTRIAL', 'LA ESTRELLA', 'LA TROJA', 'SURAMERICA', 'TABLAZA', 'VILLA ALCÁNTARA', 'Poblado Del Sur', 'LA INMACULADA 1', 'Casa Jardin', 'CALDAS', 'BARRIOS UNIDOS', 'LOS CEREZOS', 'OLAYA HERRERA', 'LA DOCENA', 'FELIPE ECHAVARRÍA ', 'LA CHUSCALA', 'LA PLANTA', 'LA ACUARELA ', 'ANDALUCÍA', 'LA GORETTY', 'VILLA CAPRI', 'LA BUENA ESPERANZA', 'FUNDADORES', 'CENTENARIO', 'MANDALAY', 'LA PLAYITA', 'ANSERMA', 'PORVENIR', 'LA DORADA CALDAS', 'MADERA', 'BELLO', 'NIQUIA', 'AUTOPISTA MEDELLIN - BOGOTÁ', 'NAVARRA', 'CABAÑAS', 'Bucaros', 'Amazonia', 'Molinares', 'CabaÑitas', 'El Trapiche', 'Salento', 'Manchester', 'SERRAMONTE', 'GORETTI', 'Mirador', 'COPACABANA', 'Vereda Nemqueteba', 'GIRARDOTA', 'CABILDO', 'BARBOSA', 'CHICÓ NAVARRA', 'ALTOS DE SERREZUELA', ' BALCONES DE VISTA HERMOSA', ' BALMORAL NORTE', ' BUENAVISTA', ' CHAPARRAL', ' EL CODITO', ' EL REFUGIO DE SAN ANTONIO', ' EL VERBENAL', ' HORIZONTES', ' LA ESTRELLITA', ' LA LLANURITA', ' LOS CONSUELOS', ' MARANTÁ', ' MATURÍN', ' MEDELLÍN', ' MIRADOR DEL NORTE', ' NUEVO HORIZONTE', ' SAN ANTONIO NORTE', ' SANTANDERSITO', ' TIBABITA', ' VIÑA DEL MAR.'
-        ];
+        // Lista de sectores que conseguí del sistema de Mobilia
+        // Había que extraerlos manualmente porque no hay un endpoint para esto
+        var sectorList = ['POBLADO', 'SAN DIEGO', 'NUEVO POBLADO', 'CASTROPOL', 'MANILA', 'PROVENZA', 'PATIO BONITO', 'LAS LOMAS', 'ALEJANDRIA', 'LOS PARRA', 'LOS BALSOS', 'SANTA MARIA DE LOS ANGELES', 'LA FRONTERA M', 'EL CAMPESTRE', 'LOS GONZALEZ', 'LA COLA DEL ZORRO', 'LA CONCHA', 'EL TESORO', 'SAN LUCAS', 'OVIEDO', 'TRANSVERSAL INFERIOR', 'TRANSVERSAL SUPERIOR', 'INTERCONTINENTAL', 'MILLA DE ORO', 'LOMA DE LOS PARRAS', 'BARRIO COLOMBIA', 'COLINA CAMPESTRE M', 'CARIBE', 'INDUSTRIALES', 'LAS PALMAS M', 'CHAGUALO', 'LA AGUACATALA', 'LA TOMATERA', 'LAS SANTAS', 'LA CALERA', 'LOMA DEL INDIO', 'LA ASOMADERA', 'TRANSVERSAL INTERMEDIA', 'LALINDE', 'ASTORGA', 'VIZCAYA', 'SAN JULIAN', 'ALTOS DEL POBLADO', 'CANTIZAL', 'DOMINIO INMOBILIARIO', 'AVENIDA LAS VEGAS', 'La Visitación', 'LAURELES', 'ESTADIO', 'LA CASTELLANA', 'LAS ACACIAS', 'LOS CONQUISTADORES', 'SAN JOAQUÍN', 'BOLIVARIANA', 'LORENA', 'EL VELÓDROMO', 'FLORIDA NUEVA', 'NARANJAL', 'SURAMERICANA', 'LOS COLORES', 'LA CUARTA BRIGADA', 'CARLOS E. RESTREPO', 'VELODROMO', 'MANZANARES', 'SAN PABLO', 'FLORESTA', 'SAN GERMAN', 'SANTA MONICA', 'ÉXITO COLOMBIA', 'NUEVA VILLA ABURRA', 'BARRIO CORDOBA', 'ALMERIA', 'SAN JUAQUIN', 'UNICENTRO', 'LA TABLAZA', 'AMERICA NIZA', 'CORTIJO', 'LA CAMPAÑA', 'LA ALPUJARRA', 'SANTA TERESITA', 'FERRINI', 'CALASANZ PARTE ALTA', 'SIMÓN BOLÍVAR', 'BARRIO CRISTÓBAL', 'SANTA MÓNICA', 'CAMPO ALEGRE', 'EL DANUBIO', 'SANTA LUCÍA', 'LA FLORESTA', 'LA AMÉRICA', 'LOS OLIVOS', 'LOS PINOS', 'CALASANZ', 'SANTA MONICA N°1', 'SANTA MONICA N°2', 'FÁTIMA', 'ROSALES', 'BELEN', 'GRANADA', 'SAN BERNARDO', 'LAS PLAYAS', 'DIEGO ECHAVARRÍA', 'LA MOTA', 'LA HONDONADA', 'EL RINCÓN', 'LOMA DE LOS BERNAL', 'LA GLORIA', 'ALTAVISTA', 'LA PALMA', 'LOS ALPES', 'LAS VIOLETAS', 'LAS MERCEDES', 'NUEVA VILLA DEL ABURRÁ', 'MIRAVALLE', 'NOGAL LOS ALMENDROS', 'CERRO NUTIBARA', 'RODEO', 'ALAMEDA', 'ALIADAS', 'MALIBU', 'LA NUBIA', 'RODEO ALTO', 'GUAYABAL', 'MAYORCA', 'CRISTO REY', 'SANTA FE', 'ZONA INDUSTRIAL DE BELEN', 'LA COLINITA', 'CAMPO AMOR', 'EL PESEBRE', 'BLANQUIZAL', 'SANTA ROSA DE LIMA', 'LOS ALCÁZARES', 'METROPOLITANO', 'LA PRADERA', 'JUAN XXIII', 'ANTONIO NARIÑO', 'SAN JAVIER N.º 1', 'SAN JAVIER N.º 2', 'VEINTE DE JULIO', 'EL SALADO', 'NUEVOS CONQUISTADORES', 'LAS INDEPENDENCIAS', 'EL CORAZÓN', 'BELENCITO', 'BETANIA', 'EDUARDO SANTOS', 'EL SOCORRO', 'Andalucía ', 'ENVIGADO', 'LAS VEGAS', 'EL PORTAL', 'SAN MARCOS', 'PONTEVEDRA', 'JARDINES', 'VILLAGRANDE', 'LA SEBASTIANA', 'EL ESCOBERO', 'LAS FLORES', 'URIBE ÁNGEL', 'ALTO DE MISAEL', 'LAS ORQUÍDEAS', 'EL ESMERALDAL', 'LOMA EL ATRAVEZADO', 'ZUÑIGA', 'LOMA DE LAS BRUJAS', 'EL CHOCHO', 'LA INMACULADA', 'EL CHINGUÍ', 'LA MINA', 'SAN RAFAEL', 'LAS ANTILLAS', 'EL TRIANÓN', 'LOMA DEL BARRO', 'LA PAZ', 'LAS CASITAS', 'PRIMAVERA', 'MILÁN', 'VALLEJUELOS', 'ALCALÁ', 'EL DORADO', 'SAN JOSÉ', 'LOS NARANJOS', 'BARRIO MESA', 'ZONA CENTRO', 'BARRIO OBRERO', 'LA FRONTERA', 'BUCAREST', 'CUMBRES', 'CAMINO VERDE', 'LA SALLE', 'LA MAGNOLIA', 'LOMA DE LOS BENEDICTINOS', 'LA AVADIA', 'LOMA DEL ATRAVESADO', 'LOMA DEL CHOCHO', 'ACANTO', 'OTRA PARTE', 'GUALANDAYES', 'CENTRO DE ENVIGADO', 'LA FE', 'LA FLORIDA', 'EL GUÁIMARO', 'EL CONSUELO', 'LAS COMETAS', 'SEÑORIAL', 'SAN JOSE LAS ESTATUA', 'LOMA DE LOS MESA', 'Loma El Atravesado', 'Loma Del Escobero', 'Loma Benedictinos', 'La Catedral', 'La Abadia', 'La Cuenca', 'Loma Del Esmeraldal', 'Alto De Palmas', 'Oasis', 'MALL LA SEBASTIANA', 'MANGAZUL', 'Abadia', 'ALTO DE LAS FLORES', 'VEREDA LAS BRISAS', 'MARÍA AUXILIADORA', 'LAS LOMITAS', 'LA DOCTORA', 'CAÑAVERALEJO', 'PAN DE AZÚCAR', 'SABANETA', 'Villa del Carmen', 'Vereda CaÑaveralejo', 'Vereda San Jose', 'Loma San Jose', 'San Remo', 'Vereda Las Lomitas', 'Callejon Del Banco', 'ALIADAS DEL SUR', 'ANCON SUR', 'CALLE DEL BANCO', 'CALLE LARGA', 'EL CARMELO', 'ENTREAMIGOS', 'HOLANDA', 'LA BARQUEREÑA', 'LAGOS DE LA DOCTORA', 'LOS ALCAZARES', 'LOS ARIAS', 'MANUEL RESTREPO', 'MARIA AUXILIADORA', 'PAN DE AZUCAR', 'PASO ANCHO', 'PLAYAS DE MARÍA', 'PRADOS DE SABANETA', 'PROMISIÓN', 'RESTREPO NARANJO', 'SABANETA REAL', 'SAN JOAQUIN', 'SAN JOSE', 'SANTA ANA', 'TRES ESQUINAS', 'VEGAS DE LA DOCTORA', 'VEGAS DE SAN JOSE', 'VILLAS DEL CARMEN', 'VIRGEN DEL CARMEN', 'ZONA INDUSTRIAL ', 'LA INDEPENDENCIA', 'SAN JUAN BAUTISTA', 'ARAUCARIA', 'CENTRO', 'ASTURIAS', 'VILLA PAULA', 'ARTEX', 'PLAYA RICA', 'SATEXCO', 'SAN ISIDRO', 'LA SANTA CRUZ ', 'SANTA CATALINA', 'SAMARIA', 'LA FINCA', 'YARUMITO', 'EL PALMAR', 'LAS MARGARITAS', 'MALTA', 'GLORIETA PILSEN', 'MONTE VERDE', 'CAMPAROLA', 'SAN PIO X', 'LA PALAMA', 'JARDINES MONTESACRO', 'LAS BRISAS', 'PILSEN', 'SAN JAVIER', 'VILLA LIA', '19 DE ABRIL', 'SAN GABRIEL', 'SAN ANTONIO', 'TRIANA', 'DITAIRES', 'SAN FRANCISCO', 'SANTA MARIA ', 'COLINAS DEL SUR', 'CENTRAL MAYORISTA', 'SAN FERNANDO', 'LA RAYA (GUAYABAL)', 'LAS AMÉRICAS', 'EL TABLAZO', 'CALATRAVA', 'LOMA LINDA', 'TERRANOVA', 'LA ALDEA', 'FERRARA', 'BALCONES DE SEVILLA', 'EL ROSARIO', 'LA UNIÓN', 'SANTA MARÍA LA NUEVA', 'ITAGUI', 'BARILOCHE', 'VIVIENDAS DEL SUR', 'LA ESMERALDA', 'GUAYABALÍA', 'VILLA VENTURA', 'EL GUAYABO', 'ASDESILLAS', 'Centro De La Moda', 'Suramérica', 'ANCÓN SAN MARTÍN', 'VILLA ALICIA ', 'VILLA MIRA', 'BELLAVISTA', 'CAMILO TORRES', 'CAQUETA', 'CHILE', 'EL PEDRERO', 'ESCOBAR', 'HORIZONTES', 'LA CHINCA', 'LA FERREIRA', 'LA FERRERIA', 'LA OSPINA', 'MONTERREY', 'QUEBRADA GRANDE', 'SAN AGUSTÍN', 'SAN ANDRES', 'SAN CAYETANO', 'SAN VICENTE', 'ZONA INDUSTRIAL', 'LA ESTRELLA', 'LA TROJA', 'SURAMERICA', 'TABLAZA', 'VILLA ALCÁNTARA', 'Poblado Del Sur', 'LA INMACULADA 1', 'Casa Jardin', 'CALDAS', 'BARRIOS UNIDOS', 'LOS CEREZOS', 'OLAYA HERRERA', 'LA DOCENA', 'FELIPE ECHAVARRÍA ', 'LA CHUSCALA', 'LA PLANTA', 'LA ACUARELA ', 'ANDALUCÍA', 'LA GORETTY', 'VILLA CAPRI', 'LA BUENA ESPERANZA', 'FUNDADORES', 'CENTENARIO', 'MANDALAY', 'LA PLAYITA', 'ANSERMA', 'PORVENIR', 'LA DORADA CALDAS', 'MADERA', 'BELLO', 'NIQUIA', 'AUTOPISTA MEDELLIN - BOGOTÁ', 'NAVARRA', 'CABAÑAS', 'Bucaros', 'Amazonia', 'Molinares', 'CabaÑitas', 'El Trapiche', 'Salento', 'Manchester', 'SERRAMONTE', 'GORETTI', 'Mirador', 'COPACABANA', 'Vereda Nemqueteba', 'GIRARDOTA', 'CABILDO', 'BARBOSA', 'CHICÓ NAVARRA', 'ALTOS DE SERREZUELA', ' BALCONES DE VISTA HERMOSA', ' BALMORAL NORTE', ' BUENAVISTA', ' CHAPARRAL', ' EL CODITO', ' EL REFUGIO DE SAN ANTONIO', ' EL VERBENAL', ' HORIZONTES', ' LA ESTRELLITA', ' LA LLANURITA', ' LOS CONSUELOS', ' MARANTÁ', ' MATURÍN', ' MEDELLÍN', ' MIRADOR DEL NORTE', ' NUEVO HORIZONTE', ' SAN ANTONIO NORTE', ' SANTANDERSITO', ' TIBABITA', ' VIÑA DEL MAR.'];
+        
+        const SECTORES_COMPLETOS = sectorList;
 
         // Función para inicializar el sistema de autocompletado inteligente
         function initializeSectorAutocomplete() {
-            console.log('Inicializando autocompletado con sectores embebidos...');
+            console.log('Configurando autocompletado...');
             setupAutocomplete(SECTORES_COMPLETOS);
         }
 
@@ -2212,7 +2214,10 @@
                 setTimeout(() => hideSuggestions(), 150);
             });
 
+            // Esta es la función que se encarga de buscar coincidencias
+            // Probé varias cosas hasta que funcionó bien con errores de tipeo
             function findSectorMatches(query, sectores) {
+                // Si escriben menos de 2 letras no busco nada
                 if (!query || query.length < 2) return [];
                 
                 const normalizedQuery = normalizeText(query);
@@ -2223,25 +2228,25 @@
                 sectores.forEach(sector => {
                     const normalizedSector = normalizeText(sector);
                     
-                    // 1. COINCIDENCIA EXACTA (100 puntos)
+                    // Si coincide exactamente, perfecto
                     if (normalizedSector === normalizedQuery) {
                         matches.push({ sector, score: 100, type: 'exacto' });
                         return;
                     }
 
-                    // 2. COINCIDENCIA AL INICIO (95 puntos)
+                    // Si empieza con lo que buscan, también está bien
                     if (normalizedSector.startsWith(normalizedQuery)) {
                         matches.push({ sector, score: 95, type: 'inicio' });
                         return;
                     }
 
-                    // 3. CONTIENE LA BÚSQUEDA COMPLETA (85 puntos)
+                    // Si lo contiene en alguna parte
                     if (normalizedSector.includes(normalizedQuery)) {
                         matches.push({ sector, score: 85, type: 'contiene' });
                         return;
                     }
 
-                    // 4. BÚSQUEDA POR PALABRAS INDIVIDUALES (80-90 puntos)
+                    // Aquí me pongo creativo y busco palabra por palabra
                     const queryWords = normalizedQuery.split(' ').filter(word => word.length >= 2);
                     const sectorWords = normalizedSector.split(' ').filter(word => word.length >= 2);
                     
@@ -2314,10 +2319,10 @@
                 return sortedMatches.map(match => match.sector);
             }
 
-            // Función para corregir errores de tipeo comunes
+            // Corrijo errores típicos que veo que comete la gente escribiendo sectores
             function fixCommonTypos(text) {
                 const corrections = {
-                    // Errores comunes en sectores populares
+                    // Los errores más frecuentes que he visto
                     'pblado': 'poblado',
                     'plado': 'poblado',
                     'pobldo': 'poblado',
@@ -2352,7 +2357,7 @@
 
                 let corrected = text.toLowerCase();
                 
-                // Aplicar correcciones directas
+                // Busco y reemplazo los errores que tengo catalogados
                 for (const [error, correction] of Object.entries(corrections)) {
                     if (corrected.includes(error)) {
                         corrected = corrected.replace(new RegExp(error, 'g'), correction);
@@ -2411,15 +2416,16 @@
                 return text
                     .toLowerCase()
                     .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '') // Remover acentos
-                    .replace(/[ñ]/g, 'n') // Normalizar ñ
-                    .replace(/[°º]/g, '') // Remover símbolos de grado
-                    .replace(/[^\w\s]/g, ' ') // Convertir símbolos a espacios
-                    .replace(/\s+/g, ' ') // Espacios múltiples a uno
+                    .replace(/[\u0300-\u036f]/g, '') // Adiós acentos
+                    .replace(/[ñ]/g, 'n') // ñ se vuelve n
+                    .replace(/[°º]/g, '') // Quito los simbolitos de grado
+                    .replace(/[^\w\s]/g, ' ') // Todo lo raro se vuelve espacio
+                    .replace(/\s+/g, ' ') // Espacios dobles a uno solo
                     .trim();
             }
 
             function levenshteinDistance(str1, str2) {
+                // Esto lo saqué de Wikipedia, no me pregunten cómo funciona exactamente
                 const matrix = [];
                 for (let i = 0; i <= str2.length; i++) {
                     matrix[i] = [i];
@@ -2433,9 +2439,9 @@
                             matrix[i][j] = matrix[i - 1][j - 1];
                         } else {
                             matrix[i][j] = Math.min(
-                                matrix[i - 1][j - 1] + 1,
-                                matrix[i][j - 1] + 1,
-                                matrix[i - 1][j] + 1
+                                matrix[i - 1][j - 1] + 1, // substitución
+                                matrix[i][j - 1] + 1,     // inserción
+                                matrix[i - 1][j] + 1      // eliminación
                             );
                         }
                     }
