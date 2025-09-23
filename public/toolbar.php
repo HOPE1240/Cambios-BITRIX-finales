@@ -356,6 +356,83 @@
             transform: none;
         }
 
+        /* Autocomplete styles */
+        .autocomplete-container {
+            position: relative;
+            width: 100%;
+            display: block;
+        }
+
+        .autocomplete-container input {
+            width: 100% !important;
+            box-sizing: border-box;
+            min-width: 0;
+        }
+
+        /* Asegurar que el input del sector tenga el mismo ancho */
+        #sector {
+            width: 100% !important;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .autocomplete-suggestions.show {
+            display: block;
+        }
+
+        .autocomplete-suggestion {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .autocomplete-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-suggestion:hover {
+            background: var(--background-color);
+        }
+
+        .autocomplete-suggestion.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .autocomplete-suggestion .match {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .autocomplete-suggestion.selected .match {
+            color: white;
+        }
+
+        .autocomplete-no-results {
+            padding: 12px 16px;
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+        }
+
         /* Estados de carga */
         .search-btn.loading {
             position: relative;
@@ -1008,7 +1085,12 @@
 
                     <div class="filter-group">
                         <label for="sector"><i class="fas fa-map-marker-alt"></i> Sector</label>
-                        <input id="sector" name="sector" type="text" placeholder="Ej: Poblado, Centro, Laureles..." required />
+                        <div class="autocomplete-container">
+                            <input id="sector" name="sector" type="text" 
+                                   placeholder="Ej: Poblado, Centro, Laureles..." 
+                                   autocomplete="off" required />
+                            <div id="sector-suggestions" class="autocomplete-suggestions"></div>
+                        </div>
                     </div>
 
                     <div class="filter-group">
@@ -1426,6 +1508,16 @@
                     // No incluir branchCode si el valor es "Todos" - esto permite traer TODAS las sucursales
                     if (val !== '' && !(key === 'branchCode' && val === 'Todos')) {
                         payload[key] = val;
+                    } else if (key === 'sectorCode') {
+                        // Si se selecciona una sucursal específica, enviar sectorCode vacío
+                        const branchValue = getValue('#branch');
+                        if (branchValue && branchValue !== 'Todos') {
+                            payload[key] = ''; // Enviar sector vacío cuando hay sucursal específica
+                            console.log('Sucursal específica seleccionada, enviando sectorCode vacío');
+                        } else if (val === '') {
+                            // Si no hay sucursal específica y el sector está vacío, no incluir
+                            // (esto será capturado por la validación más adelante)
+                        }
                     }
                 });
 
@@ -1453,8 +1545,10 @@
                 return;
             }
 
-            if (!apiData.sectorCode) {
-                showStatus('Por favor ingresa un sector', 'error');
+            // El sector es obligatorio solo si no se ha seleccionado una sucursal específica
+            const branchValue = document.querySelector('#branch')?.value;
+            if (!apiData.sectorCode && (!branchValue || branchValue === 'Todos')) {
+                showStatus('Por favor ingresa un sector o selecciona una sucursal específica', 'error');
                 setTimeout(hideStatus, 3000);
                 return;
             }
@@ -2030,7 +2124,421 @@
             console.log('Aplicación iniciada. Propiedades seleccionadas guardadas:', selectedProperties.length);
             updateSelectedSummary();
             updatePropertyCards();
+            initializeSectorAutocomplete();
         });
+
+        // Lista completa de sectores de Colombia (1300+ sectores)
+        const SECTORES_COMPLETOS = ['POBLADO', 'SAN DIEGO', 'NUEVO POBLADO', 'CASTROPOL', 'MANILA', 'PROVENZA', 'PATIO BONITO', 'LAS LOMAS', 'ALEJANDRIA', 'LOS PARRA', 'LOS BALSOS', 'SANTA MARIA DE LOS ANGELES', 'LA FRONTERA M', 'EL CAMPESTRE', 'LOS GONZALEZ', 'LA COLA DEL ZORRO', 'LA CONCHA', 'EL TESORO', 'SAN LUCAS', 'OVIEDO', 'TRANSVERSAL INFERIOR', 'TRANSVERSAL SUPERIOR', 'INTERCONTINENTAL', 'MILLA DE ORO', 'LOMA DE LOS PARRAS', 'BARRIO COLOMBIA', 'COLINA CAMPESTRE M', 'CARIBE', 'INDUSTRIALES', 'LAS PALMAS M', 'CHAGUALO', 'LA AGUACATALA', 'LA TOMATERA', 'LAS SANTAS', 'LA CALERA', 'LOMA DEL INDIO', 'LA ASOMADERA', 'TRANSVERSAL INTERMEDIA', 'LALINDE', 'ASTORGA', 'VIZCAYA', 'SAN JULIAN', 'ALTOS DEL POBLADO', 'CANTIZAL', 'DOMINIO INMOBILIARIO', 'AVENIDA LAS VEGAS', 'La Visitación', 'LAURELES', 'ESTADIO', 'LA CASTELLANA', 'LAS ACACIAS', 'LOS CONQUISTADORES', 'SAN JOAQUÍN', 'BOLIVARIANA', 'LORENA', 'EL VELÓDROMO', 'FLORIDA NUEVA', 'NARANJAL', 'SURAMERICANA', 'LOS COLORES', 'LA CUARTA BRIGADA', 'CARLOS E. RESTREPO', 'VELODROMO', 'MANZANARES', 'SAN PABLO', 'FLORESTA', 'SAN GERMAN', 'SANTA MONICA', 'ÉXITO COLOMBIA', 'NUEVA VILLA ABURRA', 'BARRIO CORDOBA', 'ALMERIA', 'SAN JUAQUIN', 'UNICENTRO', 'LA TABLAZA', 'AMERICA NIZA', 'CORTIJO', 'LA CAMPAÑA', 'LA ALPUJARRA', 'SANTA TERESITA', 'FERRINI', 'CALASANZ PARTE ALTA', 'SIMÓN BOLÍVAR', 'BARRIO CRISTÓBAL', 'SANTA MÓNICA', 'CAMPO ALEGRE', 'EL DANUBIO', 'SANTA LUCÍA', 'LA FLORESTA', 'LA AMÉRICA', 'LOS OLIVOS', 'LOS PINOS', 'CALASANZ', 'SANTA MONICA N°1', 'SANTA MONICA N°2', 'FÁTIMA', 'ROSALES', 'BELEN', 'GRANADA', 'SAN BERNARDO', 'LAS PLAYAS', 'DIEGO ECHAVARRÍA', 'LA MOTA', 'LA HONDONADA', 'EL RINCÓN', 'LOMA DE LOS BERNAL', 'LA GLORIA', 'ALTAVISTA', 'LA PALMA', 'LOS ALPES', 'LAS VIOLETAS', 'LAS MERCEDES', 'NUEVA VILLA DEL ABURRÁ', 'MIRAVALLE', 'NOGAL LOS ALMENDROS', 'CERRO NUTIBARA', 'RODEO', 'ALAMEDA', 'ALIADAS', 'MALIBU', 'LA NUBIA', 'RODEO ALTO', 'GUAYABAL', 'MAYORCA', 'CRISTO REY', 'SANTA FE', 'ZONA INDUSTRIAL DE BELEN', 'LA COLINITA', 'CAMPO AMOR', 'EL PESEBRE', 'BLANQUIZAL', 'SANTA ROSA DE LIMA', 'LOS ALCÁZARES', 'METROPOLITANO', 'LA PRADERA', 'JUAN XXIII', 'ANTONIO NARIÑO', 'SAN JAVIER N.º 1', 'SAN JAVIER N.º 2', 'VEINTE DE JULIO', 'EL SALADO', 'NUEVOS CONQUISTADORES', 'LAS INDEPENDENCIAS', 'EL CORAZÓN', 'BELENCITO', 'BETANIA', 'EDUARDO SANTOS', 'EL SOCORRO', 'Andalucía ', 'ENVIGADO', 'LAS VEGAS', 'EL PORTAL', 'SAN MARCOS', 'PONTEVEDRA', 'JARDINES', 'VILLAGRANDE', 'LA SEBASTIANA', 'EL ESCOBERO', 'LAS FLORES', 'URIBE ÁNGEL', 'ALTO DE MISAEL', 'LAS ORQUÍDEAS', 'EL ESMERALDAL', 'LOMA EL ATRAVEZADO', 'ZUÑIGA', 'LOMA DE LAS BRUJAS', 'EL CHOCHO', 'LA INMACULADA', 'EL CHINGUÍ', 'LA MINA', 'SAN RAFAEL', 'LAS ANTILLAS', 'EL TRIANÓN', 'LOMA DEL BARRO', 'LA PAZ', 'LAS CASITAS', 'PRIMAVERA', 'MILÁN', 'VALLEJUELOS', 'ALCALÁ', 'EL DORADO', 'SAN JOSÉ', 'LOS NARANJOS', 'BARRIO MESA', 'ZONA CENTRO', 'BARRIO OBRERO', 'LA FRONTERA', 'BUCAREST', 'CUMBRES', 'CAMINO VERDE', 'LA SALLE', 'LA MAGNOLIA', 'LOMA DE LOS BENEDICTINOS', 'LA AVADIA', 'LOMA DEL ATRAVESADO', 'LOMA DEL CHOCHO', 'ACANTO', 'OTRA PARTE', 'GUALANDAYES', 'CENTRO DE ENVIGADO', 'LA FE', 'LA FLORIDA', 'EL GUÁIMARO', 'EL CONSUELO', 'LAS COMETAS', 'SEÑORIAL', 'SAN JOSE LAS ESTATUA', 'LOMA DE LOS MESA', 'Loma El Atravesado', 'Loma Del Escobero', 'Loma Benedictinos', 'La Catedral', 'La Abadia', 'La Cuenca', 'Loma Del Esmeraldal', 'Alto De Palmas', 'Oasis', 'MALL LA SEBASTIANA', 'MANGAZUL', 'Abadia', 'ALTO DE LAS FLORES', 'VEREDA LAS BRISAS', 'MARÍA AUXILIADORA', 'LAS LOMITAS', 'LA DOCTORA', 'CAÑAVERALEJO', 'PAN DE AZÚCAR', 'SABANETA', 'Villa del Carmen', 'Vereda CaÑaveralejo', 'Vereda San Jose', 'Loma San Jose', 'San Remo', 'Vereda Las Lomitas', 'Callejon Del Banco', 'ALIADAS DEL SUR', 'ANCON SUR', 'CALLE DEL BANCO', 'CALLE LARGA', 'EL CARMELO', 'ENTREAMIGOS', 'HOLANDA', 'LA BARQUEREÑA', 'LAGOS DE LA DOCTORA', 'LOS ALCAZARES', 'LOS ARIAS', 'MANUEL RESTREPO', 'MARIA AUXILIADORA', 'PAN DE AZUCAR', 'PASO ANCHO', 'PLAYAS DE MARÍA', 'PRADOS DE SABANETA', 'PROMISIÓN', 'RESTREPO NARANJO', 'SABANETA REAL', 'SAN JOAQUIN', 'SAN JOSE', 'SANTA ANA', 'TRES ESQUINAS', 'VEGAS DE LA DOCTORA', 'VEGAS DE SAN JOSE', 'VILLAS DEL CARMEN', 'VIRGEN DEL CARMEN', 'ZONA INDUSTRIAL ', 'LA INDEPENDENCIA', 'SAN JUAN BAUTISTA', 'ARAUCARIA', 'CENTRO', 'ASTURIAS', 'VILLA PAULA', 'ARTEX', 'PLAYA RICA', 'SATEXCO', 'SAN ISIDRO', 'LA SANTA CRUZ ', 'SANTA CATALINA', 'SAMARIA', 'LA FINCA', 'YARUMITO', 'EL PALMAR', 'LAS MARGARITAS', 'MALTA', 'GLORIETA PILSEN', 'MONTE VERDE', 'CAMPAROLA', 'SAN PIO X', 'LA PALAMA', 'JARDINES MONTESACRO', 'LAS BRISAS', 'PILSEN', 'SAN JAVIER', 'VILLA LIA', '19 DE ABRIL', 'SAN GABRIEL', 'SAN ANTONIO', 'TRIANA', 'DITAIRES', 'SAN FRANCISCO', 'SANTA MARIA ', 'COLINAS DEL SUR', 'CENTRAL MAYORISTA', 'SAN FERNANDO', 'LA RAYA (GUAYABAL)', 'LAS AMÉRICAS', 'EL TABLAZO', 'CALATRAVA', 'LOMA LINDA', 'TERRANOVA', 'LA ALDEA', 'FERRARA', 'BALCONES DE SEVILLA', 'EL ROSARIO', 'LA UNIÓN', 'SANTA MARÍA LA NUEVA', 'ITAGUI', 'BARILOCHE', 'VIVIENDAS DEL SUR', 'LA ESMERALDA', 'GUAYABALÍA', 'VILLA VENTURA', 'EL GUAYABO', 'ASDESILLAS', 'Centro De La Moda', 'Suramérica', 'ANCÓN SAN MARTÍN', 'VILLA ALICIA ', 'VILLA MIRA', 'BELLAVISTA', 'CAMILO TORRES', 'CAQUETA', 'CHILE', 'EL PEDRERO', 'ESCOBAR', 'HORIZONTES', 'LA CHINCA', 'LA FERREIRA', 'LA FERRERIA', 'LA OSPINA', 'MONTERREY', 'QUEBRADA GRANDE', 'SAN AGUSTÍN', 'SAN ANDRES', 'SAN CAYETANO', 'SAN VICENTE', 'ZONA INDUSTRIAL', 'LA ESTRELLA', 'LA TROJA', 'SURAMERICA', 'TABLAZA', 'VILLA ALCÁNTARA', 'Poblado Del Sur', 'LA INMACULADA 1', 'Casa Jardin', 'CALDAS', 'BARRIOS UNIDOS', 'LOS CEREZOS', 'OLAYA HERRERA', 'LA DOCENA', 'FELIPE ECHAVARRÍA ', 'LA CHUSCALA', 'LA PLANTA', 'LA ACUARELA ', 'ANDALUCÍA', 'LA GORETTY', 'VILLA CAPRI', 'LA BUENA ESPERANZA', 'FUNDADORES', 'CENTENARIO', 'MANDALAY', 'LA PLAYITA', 'ANSERMA', 'PORVENIR', 'LA DORADA CALDAS', 'MADERA', 'BELLO', 'NIQUIA', 'AUTOPISTA MEDELLIN - BOGOTÁ', 'NAVARRA', 'CABAÑAS', 'Bucaros', 'Amazonia', 'Molinares', 'CabaÑitas', 'El Trapiche', 'Salento', 'Manchester', 'SERRAMONTE', 'GORETTI', 'Mirador', 'COPACABANA', 'Vereda Nemqueteba', 'GIRARDOTA', 'CABILDO', 'BARBOSA', 'CHICÓ NAVARRA', 'ALTOS DE SERREZUELA', ' BALCONES DE VISTA HERMOSA', ' BALMORAL NORTE', ' BUENAVISTA', ' CHAPARRAL', ' EL CODITO', ' EL REFUGIO DE SAN ANTONIO', ' EL VERBENAL', ' HORIZONTES', ' LA ESTRELLITA', ' LA LLANURITA', ' LOS CONSUELOS', ' MARANTÁ', ' MATURÍN', ' MEDELLÍN', ' MIRADOR DEL NORTE', ' NUEVO HORIZONTE', ' SAN ANTONIO NORTE', ' SANTANDERSITO', ' TIBABITA', ' VIÑA DEL MAR.'];
+
+        // Sistema de autocompletado inteligente para sectores
+        function initializeSectorAutocomplete() {
+            console.log('Inicializando autocompletado con sectores embebidos...');
+            setupAutocomplete(SECTORES_COMPLETOS);
+        }
+
+        function setupAutocomplete(sectores) {
+            const sectorInput = document.getElementById('sector');
+            const suggestionsContainer = document.getElementById('sector-suggestions');
+            let selectedIndex = -1;
+
+            // Debug: verificar que todos los sectores se cargaron
+            console.log(`Sectores cargados: ${sectores.length}`);
+
+            sectorInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                if (query.length < 2) {
+                    hideSuggestions();
+                    return;
+                }
+
+                const suggestions = findSectorMatches(query, sectores);
+                showSuggestions(suggestions, query);
+            });
+
+            sectorInput.addEventListener('keydown', function(e) {
+                const suggestions = suggestionsContainer.querySelectorAll('.autocomplete-suggestion');
+                
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
+                        updateSelection(suggestions);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, -1);
+                        updateSelection(suggestions);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+                            selectSuggestion(suggestions[selectedIndex].textContent);
+                        }
+                        break;
+                    case 'Escape':
+                        hideSuggestions();
+                        break;
+                }
+            });
+
+            sectorInput.addEventListener('blur', function() {
+                // Delay para permitir clicks en sugerencias
+                setTimeout(() => hideSuggestions(), 150);
+            });
+
+            function findSectorMatches(query, sectores) {
+                if (!query || query.length < 2) return [];
+                
+                const normalizedQuery = normalizeText(query);
+                console.log('🔍 Buscando:', query, '→ normalizado:', normalizedQuery);
+                
+                const matches = [];
+                
+                sectores.forEach(sector => {
+                    const normalizedSector = normalizeText(sector);
+                    
+                    // 1. COINCIDENCIA EXACTA (100 puntos)
+                    if (normalizedSector === normalizedQuery) {
+                        matches.push({ sector, score: 100, type: 'exacto' });
+                        return;
+                    }
+
+                    // 2. COINCIDENCIA AL INICIO (95 puntos)
+                    if (normalizedSector.startsWith(normalizedQuery)) {
+                        matches.push({ sector, score: 95, type: 'inicio' });
+                        return;
+                    }
+
+                    // 3. CONTIENE LA BÚSQUEDA COMPLETA (85 puntos)
+                    if (normalizedSector.includes(normalizedQuery)) {
+                        matches.push({ sector, score: 85, type: 'contiene' });
+                        return;
+                    }
+
+                    // 4. BÚSQUEDA POR PALABRAS INDIVIDUALES (80-90 puntos)
+                    const queryWords = normalizedQuery.split(' ').filter(word => word.length >= 2);
+                    const sectorWords = normalizedSector.split(' ').filter(word => word.length >= 2);
+                    
+                    let wordMatches = 0;
+                    let partialMatches = 0;
+                    
+                    queryWords.forEach(queryWord => {
+                        sectorWords.forEach(sectorWord => {
+                            if (sectorWord === queryWord) {
+                                wordMatches += 2; // Coincidencia exacta de palabra
+                            } else if (sectorWord.includes(queryWord) && queryWord.length >= 3) {
+                                wordMatches += 1; // Coincidencia parcial
+                            } else if (queryWord.includes(sectorWord) && sectorWord.length >= 3) {
+                                partialMatches += 1; // Palabra del sector contenida en query
+                            }
+                        });
+                    });
+
+                    if (wordMatches > 0) {
+                        const wordScore = Math.min(90, 70 + (wordMatches * 5) + (partialMatches * 2));
+                        matches.push({ sector, score: wordScore, type: 'palabras' });
+                        return;
+                    }
+
+                    // 5. CORRECCIÓN DE ERRORES COMUNES (60-80 puntos)
+                    const queryFixed = fixCommonTypos(normalizedQuery);
+                    if (queryFixed !== normalizedQuery) {
+                        if (normalizedSector.includes(queryFixed)) {
+                            matches.push({ sector, score: 75, type: 'corregido' });
+                            return;
+                        }
+                        if (normalizedSector.startsWith(queryFixed)) {
+                            matches.push({ sector, score: 80, type: 'corregido-inicio' });
+                            return;
+                        }
+                    }
+
+                    // 6. BÚSQUEDA FUZZY INTELIGENTE (50-70 puntos)
+                    if (normalizedQuery.length >= 4) {
+                        const similarity = calculateSimilarity(normalizedQuery, normalizedSector);
+                        
+                        if (similarity >= 70) {
+                            matches.push({ sector, score: Math.round(similarity), type: 'fuzzy-alta' });
+                        } else if (similarity >= 50 && normalizedQuery.length >= 6) {
+                            matches.push({ sector, score: Math.round(similarity), type: 'fuzzy-media' });
+                        }
+                    }
+
+                    // 7. BÚSQUEDA SIN ESPACIOS PARA ERRORES DE TIPEO (40-60 puntos)
+                    const queryNoSpaces = normalizedQuery.replace(/\s/g, '');
+                    const sectorNoSpaces = normalizedSector.replace(/\s/g, '');
+                    
+                    if (queryNoSpaces.length >= 4) {
+                        if (sectorNoSpaces.includes(queryNoSpaces)) {
+                            matches.push({ sector, score: 55, type: 'sin-espacios' });
+                        } else if (sectorNoSpaces.startsWith(queryNoSpaces)) {
+                            matches.push({ sector, score: 60, type: 'sin-espacios-inicio' });
+                        }
+                    }
+                });
+
+                // Ordenar por score y limitar resultados
+                const sortedMatches = matches
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 8);
+                    
+                console.log('🎯 Mejores resultados para "' + query + '":', 
+                    sortedMatches.map(m => `${m.sector} (${m.score}% - ${m.type})`));
+                
+                return sortedMatches.map(match => match.sector);
+            }
+
+            // Función para corregir errores de tipeo comunes
+            function fixCommonTypos(text) {
+                const corrections = {
+                    // Errores comunes en sectores populares
+                    'pblado': 'poblado',
+                    'plado': 'poblado',
+                    'pobldo': 'poblado',
+                    'pbaldo': 'poblado',
+                    'larels': 'laureles',
+                    'laurles': 'laureles',
+                    'laureles': 'laureles',
+                    'laurees': 'laureles',
+                    'envgado': 'envigado',
+                    'envigdo': 'envigado',
+                    'enbigado': 'envigado',
+                    'sabneta': 'sabaneta',
+                    'sabanta': 'sabaneta',
+                    'sabanet': 'sabaneta',
+                    'itagy': 'itagui',
+                    'itagi': 'itagui',
+                    'itagüi': 'itagui',
+                    'itague': 'itagui',
+                    'beln': 'belen',
+                    'belan': 'belen',
+                    'blen': 'belen',
+                    'guaybal': 'guayabal',
+                    'guaybal': 'guayabal',
+                    'guaybal': 'guayabal',
+                    'caldas': 'caldas',
+                    'caldas': 'caldas',
+                    'belo': 'bello',
+                    'bllo': 'bello',
+                    'estrela': 'estrella',
+                    'estrlla': 'estrella'
+                };
+
+                let corrected = text.toLowerCase();
+                
+                // Aplicar correcciones directas
+                for (const [error, correction] of Object.entries(corrections)) {
+                    if (corrected.includes(error)) {
+                        corrected = corrected.replace(new RegExp(error, 'g'), correction);
+                    }
+                }
+
+                return corrected;
+            }
+
+            // Función mejorada de similitud con peso para errores comunes
+            function calculateSimilarity(str1, str2) {
+                if (str1 === str2) return 100;
+                
+                const len1 = str1.length;
+                const len2 = str2.length;
+                const maxLen = Math.max(len1, len2);
+                
+                if (maxLen === 0) return 100;
+                
+                // Calcular distancia de Levenshtein
+                const distance = levenshteinDistance(str1, str2);
+                
+                // Ajustar puntuación basada en longitud y patrones
+                let similarity = ((maxLen - distance) / maxLen) * 100;
+                
+                // Bonificación si una cadena contiene la otra
+                if (str1.includes(str2) || str2.includes(str1)) {
+                    similarity += 10;
+                }
+                
+                // Bonificación si comienzan igual
+                const commonPrefix = getCommonPrefix(str1, str2);
+                if (commonPrefix.length >= 3) {
+                    similarity += (commonPrefix.length / maxLen) * 15;
+                }
+                
+                // Penalización por diferencia de longitud muy grande
+                const lengthDiff = Math.abs(len1 - len2);
+                if (lengthDiff > maxLen * 0.5) {
+                    similarity -= 10;
+                }
+                
+                return Math.min(100, Math.max(0, similarity));
+            }
+
+            // Función auxiliar para obtener prefijo común
+            function getCommonPrefix(str1, str2) {
+                let i = 0;
+                while (i < str1.length && i < str2.length && str1[i] === str2[i]) {
+                    i++;
+                }
+                return str1.substring(0, i);
+            }
+
+            function normalizeText(text) {
+                return text
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '') // Remover acentos
+                    .replace(/[ñ]/g, 'n') // Normalizar ñ
+                    .replace(/[°º]/g, '') // Remover símbolos de grado
+                    .replace(/[^\w\s]/g, ' ') // Convertir símbolos a espacios
+                    .replace(/\s+/g, ' ') // Espacios múltiples a uno
+                    .trim();
+            }
+
+            function levenshteinDistance(str1, str2) {
+                const matrix = [];
+                for (let i = 0; i <= str2.length; i++) {
+                    matrix[i] = [i];
+                }
+                for (let j = 0; j <= str1.length; j++) {
+                    matrix[0][j] = j;
+                }
+                for (let i = 1; i <= str2.length; i++) {
+                    for (let j = 1; j <= str1.length; j++) {
+                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+                return matrix[str2.length][str1.length];
+            }
+
+            function showSuggestions(suggestions, query) {
+                selectedIndex = -1;
+                
+                if (suggestions.length === 0) {
+                    suggestionsContainer.innerHTML = '<div class="autocomplete-no-results">No se encontraron sectores similares</div>';
+                } else {
+                    const normalizedQuery = normalizeText(query);
+                    suggestionsContainer.innerHTML = suggestions.map(sector => {
+                        const highlighted = highlightMatch(sector, query);
+                        return `<div class="autocomplete-suggestion" data-sector="${sector}">${highlighted}</div>`;
+                    }).join('');
+
+                    // Agregar event listeners a las sugerencias
+                    suggestionsContainer.querySelectorAll('.autocomplete-suggestion').forEach(suggestion => {
+                        suggestion.addEventListener('click', function() {
+                            selectSuggestion(this.dataset.sector);
+                        });
+                    });
+                }
+
+                suggestionsContainer.classList.add('show');
+            }
+
+            function highlightMatch(sector, query) {
+                const normalizedSector = normalizeText(sector);
+                const normalizedQuery = normalizeText(query);
+                
+                // Intentar resaltar coincidencia exacta primero
+                let exactIndex = normalizedSector.indexOf(normalizedQuery);
+                if (exactIndex !== -1) {
+                    // Encontrar la posición real en el sector original
+                    let realIndex = 0;
+                    let normalizedIndex = 0;
+                    
+                    while (normalizedIndex < exactIndex && realIndex < sector.length) {
+                        if (normalizeText(sector[realIndex]) === normalizedSector[normalizedIndex]) {
+                            normalizedIndex++;
+                        }
+                        realIndex++;
+                    }
+                    
+                    const start = sector.substring(0, realIndex);
+                    const matchLength = query.length;
+                    const match = sector.substring(realIndex, realIndex + matchLength);
+                    const end = sector.substring(realIndex + matchLength);
+                    
+                    return `${start}<span class="match">${match}</span>${end}`;
+                }
+
+                // Si no hay coincidencia exacta, intentar resaltar palabras individuales
+                const queryWords = normalizedQuery.split(' ').filter(word => word.length >= 2);
+                let highlightedSector = sector;
+                
+                queryWords.forEach(word => {
+                    if (word.length >= 3) {
+                        // Crear una expresión regular para encontrar la palabra (insensible a mayúsculas)
+                        const regex = new RegExp(`\\b(${escapeRegex(word)})`, 'gi');
+                        highlightedSector = highlightedSector.replace(regex, '<span class="match">$1</span>');
+                    }
+                });
+                
+                return highlightedSector;
+            }
+
+            function escapeRegex(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            function updateSelection(suggestions) {
+                suggestions.forEach((suggestion, index) => {
+                    suggestion.classList.toggle('selected', index === selectedIndex);
+                });
+            }
+
+            function selectSuggestion(sector) {
+                sectorInput.value = sector;
+                hideSuggestions();
+                sectorInput.focus();
+            }
+
+            function hideSuggestions() {
+                suggestionsContainer.classList.remove('show');
+                selectedIndex = -1;
+            }
+        }
+
+        // Manejar cambios en la selección de sucursal
+        function handleBranchChange() {
+            const branchSelect = document.querySelector('#branch');
+            const sectorInput = document.querySelector('#sector');
+            const sectorLabel = document.querySelector('label[for="sector"]');
+            
+            if (branchSelect && sectorInput && sectorLabel) {
+                branchSelect.addEventListener('change', function() {
+                    const selectedBranch = this.value;
+                    
+                    if (selectedBranch && selectedBranch !== 'Todos') {
+                        // Sucursal específica seleccionada - sector se vuelve opcional
+                        sectorInput.style.opacity = '0.7';
+                        sectorInput.placeholder = 'Opcional (puedes dejarlo vacío)';
+                        sectorInput.removeAttribute('required'); // Quitar validación required
+                        sectorLabel.innerHTML = '<i class="fas fa-map-marker-alt"></i> Sector <small class="text-muted">(opcional)</small>';
+                        
+                        console.log(`Sucursal ${selectedBranch} seleccionada - sector es ahora opcional`);
+                    } else {
+                        // "Todas las sucursales" seleccionado - sector es obligatorio
+                        sectorInput.style.opacity = '1';
+                        sectorInput.placeholder = 'Ej: El Poblado, Laureles, Envigado...';
+                        sectorInput.setAttribute('required', 'required'); // Agregar validación required
+                        sectorLabel.innerHTML = '<i class="fas fa-map-marker-alt"></i> Sector';
+                        
+                        console.log('Todas las sucursales seleccionadas - sector es obligatorio');
+                    }
+                });
+                
+                // Ejecutar una vez al cargar para establecer el estado inicial
+                branchSelect.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // Inicializar el manejo de cambios de sucursal
+        handleBranchChange();
 
         console.log('Aplicación de búsqueda de inmuebles iniciada correctamente');
     </script>

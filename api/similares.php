@@ -63,10 +63,14 @@ function buildParams($input) {
     $params = [
         'operation' => 'getMatchingProperties',
         'propertyTypeCode' => $propertyTypeCode,
-        'sectorCode' => $sectorCode,
         'forRent' => $input['forRent'] ?? 'T',
         'onSale' => $input['onSale'] ?? 'F'
     ];
+    
+    // Solo agregar sectorCode si no está vacío
+    if (!empty($sectorCode)) {
+        $params['sectorCode'] = $sectorCode;
+    }
     
     // Solo agregar branchCode si está especificado y no es "Todos"
     if (!empty($input['branchCode']) && $input['branchCode'] !== 'Todos') {
@@ -105,10 +109,13 @@ function buildParams($input) {
         exit;
     }
     
-    if (empty($sectorCode)) {
+    // sectorCode es obligatorio solo si no hay branchCode específico
+    $hasBranchCode = !empty($params['branchCode']);
+    if (empty($sectorCode) && !$hasBranchCode) {
         http_response_code(400);
         echo json_encode([
-            'error' => 'Parámetro obligatorio faltante: sectorCode/sector',
+            'error' => 'Debe especificar sectorCode o branchCode',
+            'detail' => 'sectorCode es obligatorio cuando no se especifica una sucursal específica',
             'received' => array_keys($input),
             'status' => false
         ]);
