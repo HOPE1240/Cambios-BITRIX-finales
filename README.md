@@ -179,64 +179,46 @@ curl -I https://tu-dominio.com/public/index.php
 
 ---
 
-## 🔧 Integración con Bitrix24
+## 🔧 Integración con Bitrix24 (Instalación Simplificada)
 
-### Paso 1: Crear Aplicación en Market
+### Paso 1: Configurar Ngrok (Desarrollo Local)
+```bash
+# 1. Ejecutar ngrok para exponer tu servidor local
+ngrok http 80
 
-1. **Acceder a Bitrix24** → **Market** → **Desarrolladores** → **Crear Aplicación**
-
-2. **Configurar Parámetros**:
-   ```
-   Nombre de la aplicación: Inmuebles Similares - Acrecer
-   Código de la aplicación: inmuebles_similares_acrecer
-   URL de la aplicación: https://TU-URL/public/index.php
-   URL del manejador: https://TU-URL/public/toolbar_clean.php
-   ```
-
-3. **Seleccionar Permisos**:
-   - ✅ **CRM** (crm) - Acceso a datos de negociaciones
-   - ✅ **Timeline** (timeline) - Escritura en línea de tiempo
-   - ✅ **User** (user) - Información básica del usuario
-
-4. **Crear Aplicación**: Hacer clic en **"ABRIR APLICACIÓN"**
-
-### Paso 2: Configurar Placement (Pestaña en Deals)
-
-Una vez creada la aplicación base, configurar el placement programáticamente:
-
-1. **Abrir la aplicación** desde Bitrix24 Market
-2. **Abrir consola del navegador** (F12 → Console)
-3. **Ejecutar script de configuración**:
-
-```javascript
-// Script de configuración de placement
-console.log('🔧 Configurando placement para Inmuebles Similares...');
-
-if (typeof BX24 === 'undefined') {
-    console.error('❌ BX24 API no disponible');
-    alert('Error: Debe ejecutarse desde Bitrix24');
-} else {
-    console.log('✅ Configurando placement CRM_DEAL_DETAIL_TAB...');
-    
-    BX24.callMethod('placement.bind', {
-        'placement': 'CRM_DEAL_DETAIL_TAB',
-        'handler': 'https://TU-URL/public/toolbar_clean.php',
-        'title': 'Inmuebles Similares',
-        'description': 'Búsqueda especializada de propiedades para arrendamiento'
-    }, function(result) {
-        if (result.error()) {
-            console.error('❌ Error:', result.error());
-            alert('Error al configurar: ' + result.error().error_description);
-        } else {
-            console.log('✅ Placement configurado exitosamente');
-            alert('✅ ¡Configuración completada!\n\nAhora ve a:\nCRM → Negocios → Abrir deal → Pestaña "Inmuebles Similares"');
-        }
-    });
-}
+# 2. Copiar la URL generada (ejemplo: https://abc123.ngrok-free.app)
+# Esta será tu URL base para la configuración
 ```
 
-4. **Reemplazar `TU-URL`** con tu dominio real
-5. **Verificar resultado**: La pestaña aparecerá en todos los deals
+### Paso 2: Instalar en Bitrix24 (¡Solo 3 pasos!)
+
+1. **Crear Aplicación en Market**:
+   - Ir a **Market** → **Desarrolladores** → **Crear Aplicación**
+   - Nombre: `Inmuebles Similares - Acrecer`
+   - **Cambiar esta URL**: `https://TU-URL-NGROK/Bitrix-Iframe/public/toolbar_clean.php`
+   - Permisos: CRM, Timeline, User
+
+2. **Configurar Placement** (Ejecutar en consola F12):
+```javascript
+BX24.callMethod('placement.bind', {
+    'placement': 'CRM_DEAL_DETAIL_TAB',
+    'handler': 'https://TU-URL-NGROK/Bitrix-Iframe/public/toolbar_clean.php',
+    'title': 'Inmuebles Similares'
+}, function(result) {
+    if (result.error()) {
+        alert('Error: ' + result.error().error_description);
+    } else {
+        alert('✅ ¡Configurado! Ve a cualquier deal → pestaña "Inmuebles Similares"');
+    }
+});
+```
+
+3. **¡Listo!** - Ve a cualquier deal en CRM → Nueva pestaña "Inmuebles Similares"
+
+### 📝 Notas Importantes:
+- **Solo cambiar**: `TU-URL-NGROK` por tu URL real de ngrok
+- **Guardar cambios** en Git después de verificar que funciona
+- **Reiniciar ngrok**: Si cambias de sesión, repetir paso 2 con nueva URL
 
 ---
 

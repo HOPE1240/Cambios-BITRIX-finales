@@ -21,10 +21,10 @@
     <style>
         /* CSS Variables para consistencia */
         :root {
-            --primary-color: #1B5E88;
-            --primary-light: #2870a0;
-            --primary-dark: #164a6b;
-            --secondary-color: #A4C73C;
+            --primary-color: #005D83;
+            --primary-light: #0074a3;
+            --primary-dark: #004663;
+            --secondary-color: #B6BD00;
             --success-color: #48bb78;
             --danger-color: #e53e3e;
             --warning-color: #ed8936;
@@ -111,7 +111,7 @@
 
         /* Panel de selecciones */
         .selected-summary {
-            background: linear-gradient(135deg, var(--success-color) 0%, #38a169 100%);
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #9aa600 100%);
             color: white;
             padding: 24px;
             border-radius: var(--radius-lg);
@@ -188,12 +188,12 @@
         }
 
         .btn-export-excel {
-            background: #22c55e;
+            background: var(--secondary-color);
             color: white;
         }
 
         .btn-export-excel:hover {
-            background: #16a34a;
+            background: #9aa600;
         }
 
         .btn-clear-all {
@@ -510,12 +510,12 @@
         }
 
         .select-btn {
-            background: var(--success-color);
+            background: var(--secondary-color);
             color: white;
         }
 
         .select-btn:hover {
-            background: #38a169;
+            background: #9aa600;
         }
 
         .select-btn:disabled {
@@ -602,9 +602,279 @@
                 gap: 20px;
             }
         }
+
+        /* Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+
+        .notification {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            position: relative;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success-color);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6fffa 100%);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning-color);
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger-color);
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        }
+
+        .notification-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            color: var(--success-color);
+        }
+
+        .notification.warning .notification-icon {
+            color: var(--warning-color);
+        }
+
+        .notification.error .notification-icon {
+            color: var(--danger-color);
+        }
+
+        .notification-content {
+            flex: 1;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Notification with Actions Styles */
+        .confirm-notification {
+            max-width: 500px;
+            padding: 16px 20px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+
+        .notification-btn {
+            background: none;
+            border: 1px solid transparent;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .notification-btn.btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-btn.btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+        }
+
+        .notification-btn.btn-confirm {
+            background: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+        }
+
+        .notification-btn.btn-confirm:hover {
+            background: #c53030;
+            border-color: #c53030;
+        }
+
+        /* Confirmation Modal Styles */
+        .confirmation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirmation-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .confirmation-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 0;
+            max-width: 420px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .confirmation-modal.show .confirmation-content {
+            transform: scale(1);
+        }
+
+        .confirmation-header {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #f6ad55 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .confirmation-header i {
+            font-size: 24px;
+        }
+
+        .confirmation-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .confirmation-body {
+            padding: 32px 24px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+        }
+
+        .confirmation-body p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-weight: 500;
+            text-align: center;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .confirmation-actions {
+            padding: 20px 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-confirm-cancel {
+            background: #f7fafc;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-confirm-cancel:hover {
+            background: #edf2f7;
+            color: var(--text-primary);
+        }
+
+        .btn-confirm-accept {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-confirm-accept:hover {
+            background: #c53030;
+        }
     </style>
 </head>
 <body>
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+    
     <div class="main-container">
         <!-- Header de la aplicación -->
         <div class="app-header">
@@ -674,13 +944,9 @@
                     
                     <div class="modal-footer bg-light border-0 p-4">
                         <div class="w-100 text-center">
-                            <button id="exportBtn" class="btn btn-success btn-lg me-3">
+                            <button id="exportBtn" class="btn btn-success btn-lg">
                                 <i class="fas fa-file-excel me-2"></i>
                                 Exportar a Excel
-                            </button>
-                            <button type="button" class="btn btn-outline-danger btn-lg" id="clearAllBtn">
-                                <i class="fas fa-trash me-2"></i>
-                                Limpiar Selección
                             </button>
                         </div>
                         <div class="w-100 mt-3">
@@ -689,6 +955,29 @@
                                 El archivo Excel se descargará automáticamente con formato profesional de tabla
                             </small>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmación Personalizado -->
+        <div id="confirmModal" class="confirmation-modal" style="display: none;">
+            <div class="confirmation-overlay">
+                <div class="confirmation-content">
+                    <div class="confirmation-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Confirmar Acción</h3>
+                    </div>
+                    <div class="confirmation-body">
+                        <p id="confirmMessage">¿Estás seguro de que quieres continuar?</p>
+                    </div>
+                    <div class="confirmation-actions">
+                        <button id="confirmCancel" class="btn-confirm-cancel">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button id="confirmAccept" class="btn-confirm-accept">
+                            <i class="fas fa-check"></i> Confirmar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -767,18 +1056,18 @@
                     </div>
                 </div>
 
-                <!-- Fila de operaciones -->
-                <div class="filter-row operations-row">
+                <!-- Fila de operaciones (oculta para equipo de arriendos) -->
+                <div class="filter-row operations-row" style="display: none;">
                     <div class="filter-group full-width">
                         <label><i class="fas fa-tags"></i> Tipo de Operación</label>
                         <div class="checkbox-group">
                             <label class="checkbox-item">
                                 <input type="checkbox" id="forRent" name="forRent" value="T" checked>
-                                <span class="checkmark">🏠 Arriendo</span>
+                                <span class="checkmark">Arriendo</span>
                             </label>
                             <label class="checkbox-item">
-                                <input type="checkbox" id="onSale" name="onSale" value="T" checked>
-                                <span class="checkmark">🏠 Venta</span>
+                                <input type="checkbox" id="onSale" name="onSale" value="T">
+                                <span class="checkmark">Venta</span>
                             </label>
                         </div>
                     </div>
@@ -806,6 +1095,18 @@
         const statusEl = document.getElementById('status');
         const resultsEl = document.getElementById('results');
         let isSearching = false;
+        
+        // Debug: verificar que los elementos existan
+        console.log('Elementos encontrados:', {
+            searchForm: !!searchForm,
+            searchBtn: !!searchBtn,
+            statusEl: !!statusEl,
+            resultsEl: !!resultsEl
+        });
+        
+        if (!searchForm) {
+            console.error('No se encontró el formulario de búsqueda con ID "searchForm"');
+        }
         
         // Variable para propiedades seleccionadas
         let selectedProperties = JSON.parse(localStorage.getItem('selectedProperties') || '[]');
@@ -878,13 +1179,13 @@
             if (!list.length) {
                 resultsEl.innerHTML = `
                     <div style="text-align: center; padding: 60px 20px; color: #718096; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-                        <div style="font-size: 3rem; margin-bottom: 20px;">🔍</div>
-                        <h3 style="color: #2d3748; margin-bottom: 12px;">¡No encontramos coincidencias exactas!</h3>
-                        <p style="margin-bottom: 16px;">💡 <strong>Sugerencias para mejorar tu búsqueda:</strong></p>
+                        <div style="font-size: 3rem; margin-bottom: 20px;"><i class="fas fa-search"></i></div>
+                        <h3 style="color: #2d3748; margin-bottom: 12px;">No encontramos coincidencias exactas</h3>
+                        <p style="margin-bottom: 16px;"><strong>Sugerencias para mejorar tu búsqueda:</strong></p>
                         <ul style="text-align: left; display: inline-block; color: #4a5568;">
-                            <li>🏠 Prueba con un tipo de propiedad diferente</li>
-                            <li>📍 Amplía el área de búsqueda o cambia el sector</li>
-                            <li>💰 Ajusta el rango de precio</li>
+                            <li>Prueba con un tipo de propiedad diferente</li>
+                            <li>Amplía el área de búsqueda o cambia el sector</li>
+                            <li>Ajusta el rango de precio</li>
                             <li><i class="fas fa-bed"></i> Modifica el número de habitaciones</li>
                         </ul>
                     </div>
@@ -898,8 +1199,7 @@
                 `Encontramos ${list.length} inmuebles perfectos para las necesidades de tu cliente`;
             
             header.innerHTML = `
-                <div style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 20px rgba(72, 187, 120, 0.3);">
-                    <div style="font-size: 2.5rem; margin-bottom: 12px;">🎯</div>
+                <div style="background: linear-gradient(135deg, var(--secondary-color) 0%, #9aa600 100%); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 20px rgba(182, 189, 0, 0.3);">
                     <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">${successMessage}</h2>
                     <p style="margin: 8px 0 0; opacity: 0.9; font-size: 1rem;">Revisa cada opción y selecciona las que mejor se adapten</p>
                 </div>
@@ -962,30 +1262,30 @@
                     
                     <div class="property-details">
                         <div class="detail-row">
-                            <span class="detail-label">📍 Sector:</span>
+                            <span class="detail-label"><i class="fas fa-map-marker-alt"></i> Sector:</span>
                             <span class="detail-value">${propertyData.sector}</span>
                         </div>
                         
                         <div class="detail-row">
-                            <span class="detail-label">🛏️ Habitaciones:</span>
+                            <span class="detail-label"><i class="fas fa-bed"></i> Habitaciones:</span>
                             <span class="detail-value">${propertyData.rooms}</span>
                         </div>
                         
                         ${areaInfo !== 'No especificada' ? `
                         <div class="detail-row">
-                            <span class="detail-label">📐 Área:</span>
+                            <span class="detail-label"><i class="fas fa-ruler-combined"></i> Área:</span>
                             <span class="detail-value">${areaInfo}</span>
                         </div>
                         ` : ''}
                         
                         <div class="detail-row">
-                            <span class="detail-label">🏷️ Operación:</span>
+                            <span class="detail-label"><i class="fas fa-tag"></i> Operación:</span>
                             <span class="detail-value">${operationType}</span>
                         </div>
                     </div>
                     
                     <div class="property-price">
-                        <span class="price-label">💰 Precio:</span>
+                        <span class="price-label"><i class="fas fa-dollar-sign"></i> Precio:</span>
                         <span class="price-value">${mainPrice}</span>
                     </div>
                     
@@ -1068,12 +1368,21 @@
                 // Verificar si tiene propiedades
                 const properties = data.properties || data.data || [];
                 showStatus(`Búsqueda completada. ${properties.length} inmuebles encontrados.`, 'success');
+                
+                // Mostrar notificación elegante según los resultados
+                if (properties.length > 0) {
+                    showNotification(`Búsqueda exitosa: ${properties.length} inmuebles encontrados`, 'success');
+                } else {
+                    showNotification('No se encontraron inmuebles con los criterios especificados', 'warning');
+                }
+                
                 render(properties);
                 setTimeout(hideStatus, 3000);
 
             } catch (error) {
                 console.error('Error en búsqueda:', error);
                 showStatus(`Error: ${error.message}`, 'error');
+                showNotification(`Error en la búsqueda: ${error.message}`, 'error');
                 setTimeout(hideStatus, 5000);
             } finally {
                 isSearching = false;
@@ -1083,10 +1392,12 @@
 
         // Event listener del formulario
         searchForm.addEventListener('submit', function(e) {
+            console.log('Formulario enviado - event listener ejecutado');
             e.preventDefault();
 
             // Función para construir el payload basada en el repositorio
             function buildPayload() {
+                console.log('Construyendo payload...');
                 const getValue = sel => (document.querySelector(sel)?.value || '').trim();
                 const getChecked = sel => document.querySelector(sel)?.checked;
 
@@ -1125,13 +1436,11 @@
                     }
                 });
 
-                // Manejo especial para checkboxes
-                const forRent = getChecked('#forRent');
-                const onSale = getChecked('#onSale');
+                // Manejo especial para checkboxes (fijos para equipo de arriendos)
+                payload.forRent = 'T'; // Siempre T para arriendo
+                payload.onSale = 'F';  // Siempre F para venta
                 
-                payload.forRent = forRent ? 'T' : 'F';
-                payload.onSale = onSale ? 'T' : 'F';
-
+                console.log('Payload construido:', payload);
                 return payload;
             }
 
@@ -1150,14 +1459,7 @@
                 return;
             }
 
-            // Validar que al menos una opción de operación esté seleccionada
-            if (apiData.forRent === 'F' && apiData.onSale === 'F') {
-                showStatus('Debes seleccionar al menos una opción: Arriendo o Venta', 'error');
-                setTimeout(hideStatus, 3000);
-                return;
-            }
-
-            console.log('Datos de búsqueda:', apiData);
+            console.log('Datos de búsqueda (modo arriendo):', apiData);
             searchProperties(apiData);
         });
 
@@ -1176,43 +1478,219 @@
             });
         }
 
+        // Sistema de notificaciones elegantes
+        function showNotification(message, type = 'success', duration = 4000) {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const iconMap = {
+                success: 'fas fa-check-circle',
+                warning: 'fas fa-exclamation-triangle', 
+                error: 'fas fa-times-circle'
+            };
+            
+            notification.innerHTML = `
+                <i class="notification-icon ${iconMap[type] || iconMap.success}"></i>
+                <div class="notification-content">${message}</div>
+                <button class="notification-close" onclick="closeNotification(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Mostrar con animación
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Auto cerrar
+            setTimeout(() => {
+                closeNotification(notification.querySelector('.notification-close'));
+            }, duration);
+        }
+        
+        function closeNotification(closeBtn) {
+            const notification = closeBtn.closest('.notification');
+            if (notification) {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }
+        }
+
+        // Sistema de notificación de confirmación elegante
+        function showConfirmNotification(message, onConfirm, onCancel = null, duration = 8000) {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification warning confirm-notification';
+            
+            notification.innerHTML = `
+                <i class="notification-icon fas fa-exclamation-triangle"></i>
+                <div class="notification-content">${message}</div>
+                <div class="notification-actions">
+                    <button class="notification-btn btn-cancel" onclick="cancelConfirmNotification(this)">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="notification-btn btn-confirm" onclick="acceptConfirmNotification(this)">
+                        <i class="fas fa-check"></i> Confirmar
+                    </button>
+                </div>
+            `;
+            
+            // Guardar las funciones de callback en el elemento
+            notification._onConfirm = onConfirm;
+            notification._onCancel = onCancel;
+            
+            container.appendChild(notification);
+            
+            // Mostrar con animación
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Auto cerrar después del tiempo especificado
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    cancelConfirmNotification(notification.querySelector('.btn-cancel'));
+                }
+            }, duration);
+        }
+        
+        function acceptConfirmNotification(btn) {
+            const notification = btn.closest('.notification');
+            if (notification && notification._onConfirm) {
+                notification._onConfirm();
+            }
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }
+        
+        function cancelConfirmNotification(btn) {
+            const notification = btn.closest('.notification');
+            if (notification && notification._onCancel) {
+                notification._onCancel();
+            }
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }
+
+        // Modal de confirmación personalizado
+        function showConfirmModal(message, onConfirm, onCancel = null) {
+            const modal = document.getElementById('confirmModal');
+            const messageEl = document.getElementById('confirmMessage');
+            const acceptBtn = document.getElementById('confirmAccept');
+            const cancelBtn = document.getElementById('confirmCancel');
+            
+            messageEl.textContent = message;
+            modal.style.display = 'flex';
+            
+            // Mostrar con animación
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            // Manejadores de eventos
+            const handleAccept = () => {
+                hideConfirmModal();
+                if (onConfirm) onConfirm();
+            };
+            
+            const handleCancel = () => {
+                hideConfirmModal();
+                if (onCancel) onCancel();
+            };
+            
+            const handleOverlayClick = (e) => {
+                if (e.target === modal.querySelector('.confirmation-overlay')) {
+                    handleCancel();
+                }
+            };
+            
+            // Limpiar eventos anteriores
+            acceptBtn.replaceWith(acceptBtn.cloneNode(true));
+            cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+            modal.replaceWith(modal.cloneNode(true));
+            
+            // Obtener nuevas referencias
+            const newModal = document.getElementById('confirmModal');
+            const newAcceptBtn = document.getElementById('confirmAccept');
+            const newCancelBtn = document.getElementById('confirmCancel');
+            
+            // Agregar nuevos eventos
+            newAcceptBtn.addEventListener('click', handleAccept);
+            newCancelBtn.addEventListener('click', handleCancel);
+            newModal.addEventListener('click', handleOverlayClick);
+        }
+        
+        function hideConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
         // Funciones de selección y gestión de propiedades
         function updateSelectedSummary() {
-            const summarySection = $('#selectedSummary');
-            const summaryCount = $('#summaryCount');
-            const summaryList = $('#selectedSummaryList');
+            const summarySection = document.getElementById('selectedSummary');
+            const summaryCount = document.getElementById('summaryCount');
+            const summaryList = document.getElementById('selectedSummaryList');
             
-            if (!summarySection || !summaryCount || !summaryList) return;
+            console.log('Actualizando resumen. Propiedades seleccionadas:', selectedProperties.length);
+            
+            if (!summarySection || !summaryCount || !summaryList) {
+                console.error('No se encontraron elementos DOM para el resumen');
+                return;
+            }
             
             if (selectedProperties.length > 0) {
                 summarySection.style.display = 'block';
                 summaryCount.textContent = selectedProperties.length;
                 
-                const summaryHTML = selectedProperties.map(property => `
-                    <div class="summary-item">
-                        <strong>${property.type}</strong> • ${property.sector}<br>
-                        💰 ${property.price} • 🛏️ ${property.rooms} hab
+                const summaryHTML = selectedProperties.map((property, index) => `
+                    <div class="summary-item" data-property-index="${index}">
+                        <strong>${property.type || 'N/A'}</strong> • ${property.sector || 'N/A'}<br>
+                        <span class="price-info">Precio: ${property.price || 'N/A'}</span> • <span class="rooms-info">${property.rooms || 'N/A'} hab</span>
                     </div>
                 `).join('');
                 
                 summaryList.innerHTML = summaryHTML;
+                console.log('HTML del resumen generado:', summaryHTML);
             } else {
                 summarySection.style.display = 'none';
+                console.log('Ocultando sección de resumen - no hay propiedades seleccionadas');
             }
         }
 
         function selectProperty(propertyData) {
+            console.log('Intentando seleccionar propiedad:', propertyData);
+            
             const isAlreadySelected = selectedProperties.some(p => p.code === propertyData.code);
             
             if (isAlreadySelected) {
-                alert('Esta propiedad ya está seleccionada.');
+                showNotification('Esta propiedad ya está seleccionada.', 'warning');
                 return;
             }
             
             selectedProperties.push(propertyData);
+            console.log('Propiedad agregada. Total seleccionadas:', selectedProperties.length);
+            console.log('Todas las propiedades:', selectedProperties);
+            
             saveSelections();
             updatePropertyCards();
-            alert('✅ Inmueble seleccionado: ' + propertyData.type + ' en ' + propertyData.sector);
+            updateSelectedSummary(); // Mostrar la lista actualizada
+            showNotification(`${propertyData.type} seleccionado exitosamente`, 'success');
         }
 
         function visualizeProperty(propertyData) {
@@ -1331,12 +1809,14 @@
         // Funcionalidad del modal profesional con Bootstrap
         function openDetailsModal() {
             if (selectedProperties.length === 0) {
-                alert('No hay inmuebles seleccionados para mostrar.');
+                showNotification('No hay inmuebles seleccionados para mostrar.', 'warning');
+                // Asegurar que el modal esté cerrado si no hay propiedades
+                closeDetailsModal();
                 return;
             }
 
-            const modalList = $('#modalPropertiesList');
-            const modalCount = $('#modalPropertyCount');
+            const modalList = document.getElementById('modalPropertiesList');
+            const modalCount = document.getElementById('modalPropertyCount');
             
             // Actualizar contador
             modalCount.textContent = selectedProperties.length;
@@ -1402,37 +1882,107 @@
             
             modalList.innerHTML = propertiesHTML;
             
-            // Usar Bootstrap modal
-            const bootstrapModal = new bootstrap.Modal($('#detailsModal'));
-            bootstrapModal.show();
+            // Gestión mejorada de instancias del modal
+            const modalElement = document.getElementById('detailsModal');
+            let existingModal = bootstrap.Modal.getInstance(modalElement);
+            
+            if (existingModal) {
+                // Si ya existe una instancia, solo actualizar contenido y mostrar
+                if (!modalElement.classList.contains('show')) {
+                    existingModal.show();
+                }
+            } else {
+                // Si no existe instancia, crear una nueva
+                const bootstrapModal = new bootstrap.Modal(modalElement, {
+                    backdrop: true,
+                    keyboard: true,
+                    focus: true
+                });
+                bootstrapModal.show();
+            }
+            
+            // Asegurar que el botón de exportar funcione
+            const exportBtn = document.getElementById('exportBtn');
+            if (exportBtn) {
+                // Remover listeners anteriores y agregar nuevo
+                exportBtn.replaceWith(exportBtn.cloneNode(true));
+                document.getElementById('exportBtn').addEventListener('click', exportToExcel);
+            }
         }
 
         function closeDetailsModal() {
-            const modal = bootstrap.Modal.getInstance($('#detailsModal'));
+            const modalElement = document.getElementById('detailsModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            
             if (modal) {
                 modal.hide();
+                
+                // Asegurar que el modal se pueda volver a abrir después
+                modalElement.addEventListener('hidden.bs.modal', function handleModalHidden() {
+                    // Remover el event listener para evitar acumulación
+                    modalElement.removeEventListener('hidden.bs.modal', handleModalHidden);
+                    
+                    // Limpiar cualquier backdrop residual
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                    
+                    // Asegurar que el body no tenga clases residuales
+                    document.body.classList.remove('modal-open');
+                    document.body.style.removeProperty('padding-right');
+                }, { once: true });
             }
         }
 
         function removeProperty(propertyCode) {
-            selectedProperties = selectedProperties.filter(p => p.code !== propertyCode);
-            saveSelections();
-            openDetailsModal(); // Refresh modal content
-            updatePropertyCards(); // Update cards visual state
+            // Encontrar la propiedad para mostrar información en la confirmación
+            const property = selectedProperties.find(p => p.code === propertyCode);
+            const propertyName = property ? `${property.type} - ${property.sector}` : 'esta propiedad';
+            
+            showConfirmNotification(
+                `¿Deseas quitar ${propertyName} de la selección?`,
+                function() {
+                    // Función de confirmación
+                    selectedProperties = selectedProperties.filter(p => p.code !== propertyCode);
+                    saveSelections();
+                    updatePropertyCards(); // Update cards visual state
+                    updateSelectedSummary(); // Update summary section
+                    
+                    // Si no quedan propiedades seleccionadas, cerrar el modal
+                    if (selectedProperties.length === 0) {
+                        closeDetailsModal();
+                        showNotification('Propiedad removida. No hay más inmuebles seleccionados', 'success');
+                    } else {
+                        // Si aún quedan propiedades, actualizar el modal
+                        openDetailsModal();
+                        showNotification('Propiedad removida de la selección', 'success');
+                    }
+                }
+            );
         }
 
         function clearAllProperties() {
-            if (confirm('¿Estás seguro de que quieres limpiar todas las selecciones?')) {
-                selectedProperties = [];
-                saveSelections();
-                closeDetailsModal();
-                updatePropertyCards();
-            }
+            showConfirmNotification(
+                '¿Deseas limpiar todas las selecciones?',
+                function() {
+                    // Función de confirmación
+                    console.log('Limpiando todas las selecciones. Antes:', selectedProperties.length);
+                    selectedProperties = [];
+                    console.log('Después de limpiar:', selectedProperties.length);
+                    
+                    saveSelections();
+                    updateSelectedSummary(); // Actualizar la vista de inmuebles seleccionados
+                    updatePropertyCards(); // Actualizar el estado visual de las tarjetas
+                    closeDetailsModal(); // Cerrar modal ya que no hay propiedades
+                    showNotification('Todas las selecciones han sido limpiadas', 'success');
+                }
+            );
         }
 
         function exportToExcel() {
             if (selectedProperties.length === 0) {
-                alert('No hay propiedades seleccionadas para exportar.');
+                showNotification('No hay propiedades seleccionadas para exportar.', 'warning');
                 return;
             }
 
@@ -1458,9 +2008,28 @@
             link.click();
         }
 
+        // Función para limpiar cache si hay problemas
+        function clearCache() {
+            localStorage.removeItem('selectedProperties');
+            selectedProperties = [];
+            updateSelectedSummary();
+            updatePropertyCards();
+            showNotification('Cache limpiado correctamente', 'success');
+        }
+
+        // Agregar función al objeto window para debugging
+        window.debugApp = {
+            selectedProperties: () => selectedProperties,
+            clearCache: clearCache,
+            updateSummary: updateSelectedSummary,
+            updateCards: updatePropertyCards
+        };
+
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Aplicación iniciada. Propiedades seleccionadas guardadas:', selectedProperties.length);
             updateSelectedSummary();
+            updatePropertyCards();
         });
 
         console.log('Aplicación de búsqueda de inmuebles iniciada correctamente');
