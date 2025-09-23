@@ -1,29 +1,22 @@
 # GitAttributes para el proyecto Bitrix-Iframe
-# Evitar detección incorrecta de lenguajes
+# Configuración para mostrar lenguajes reales del proyecto
 
-# Marcar archivos PHP como código principal
-*.php linguist-language=PHP
+# Marcar archivos principales del proyecto
 *.php linguist-detectable=true
+*.js linguist-detectable=true
+*.css linguist-detectable=true
+*.html linguist-detectable=true
 
-# Marcar JavaScript como código legítimo (no generado)
-*.js linguist-generated=false
-*.js linguist-vendored=false
+# Solo marcar como generado/vendored archivos que realmente lo son
+*.min.js linguist-vendored=true
+*.min.css linguist-vendored=true
+node_modules/** linguist-vendored=true
+vendor/** linguist-vendored=true
 
-# Marcar CSS como código personalizado
-*.css linguist-generated=false
-*.css linguist-vendored=false
+# Archivos de configuración y tokens (estos sí son generados)
+jwt_token.txt linguist-generated=true
 
 # Archivos de documentación
 *.md linguist-documentation=true
-
-# Archivos de configuración
-*.json linguist-generated=false
-config.php linguist-generated=false
-
-# Excluir archivos que SÍ son generados/vendor
-jwt_token.txt linguist-generated=true
-*.min.js linguist-vendored=true
-*.min.css linguist-vendored=true
-
-# Establecer PHP como lenguaje principal del proyecto
-* linguist-language=PHP
+INSTALACION_PLACEMENT.md linguist-documentation=true
+INTEGRACION_BITRIX24.md linguist-documentation=true
