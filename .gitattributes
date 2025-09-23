@@ -1,22 +1,33 @@
 # GitAttributes para el proyecto Bitrix-Iframe
-# Configuración para mostrar lenguajes reales del proyecto
+# Configuración para evitar detección incorrecta de "Hack"
 
-# Marcar archivos principales del proyecto
+# Forzar que todos los archivos .php se detecten como PHP (no Hack)
+*.php linguist-language=PHP
+
+# Detectar otros lenguajes correctamente
+*.js linguist-language=JavaScript
+*.css linguist-language=CSS
+*.html linguist-language=HTML
+
+# Marcar archivos como detectable
 *.php linguist-detectable=true
 *.js linguist-detectable=true
 *.css linguist-detectable=true
 *.html linguist-detectable=true
 
-# Solo marcar como generado/vendored archivos que realmente lo son
+# Solo marcar como vendored/generado archivos que realmente lo son
 *.min.js linguist-vendored=true
 *.min.css linguist-vendored=true
 node_modules/** linguist-vendored=true
 vendor/** linguist-vendored=true
 
-# Archivos de configuración y tokens (estos sí son generados)
+# Archivos que SÍ son generados
 jwt_token.txt linguist-generated=true
 
 # Archivos de documentación
 *.md linguist-documentation=true
 INSTALACION_PLACEMENT.md linguist-documentation=true
 INTEGRACION_BITRIX24.md linguist-documentation=true
+
+# Evitar que cualquier archivo se detecte como Hack
+* -linguist-language=Hack
