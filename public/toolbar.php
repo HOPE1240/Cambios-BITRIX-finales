@@ -1097,9 +1097,24 @@
                         <label for="branch"><i class="fas fa-building"></i> Sucursal</label>
                         <select id="branch" name="branch">
                             <option value="Todos" selected>Todas las sucursales</option>
-                            <option value="POBLADO">POBLADO</option>
+                            <option value="BELEN">BELÉN</option>
+                            <option value="BELLO">BELLO</option>
+                            <option value="BELLOSUR">BELLOSUR</option>
+                            <option value="CEDRITOS">CEDRITOS</option>
+                            <option value="CENTRO">CENTRO</option>
+                            <option value="CHICO">CHICO</option>
+                            <option value="GUAYABAL">GUAYABAL</option>
+                            <option value="ITAGUI">ITAGÜÍ</option>
+                            <option value="LAURELES">LAURELES</option>
+                            <option value="MOSQUERA">MOSQUERA</option>
+                            <option value="NUEVOMUNDO">NUEVOMUNDO</option>
                             <option value="OCCIDENTE">OCCIDENTE</option>
-                            <option value="BOGOTA SUR">BOGOTÁ SUR</option>
+                            <option value="POBLADO">POBLADO</option>
+                            <option value="RIONEGRO">RIONEGRO</option>
+                            <option value="SABANETA">SABANETA</option>
+                            <option value="SALITRE">SALITRE</option>
+                            <option value="SUR">SUR</option>
+                            <option value="VIRTUAL">VIRTUAL</option>
                         </select>
                     </div>
                 </div>
