@@ -1,11 +1,4 @@
-# GitAttributes para el proyecto Bitrix-Iframe
-# Configuración simple para detección correcta de lenguajes
-
-# Forzar que archivos PHP se detecten como PHP (no Hack)
-*.php linguist-language=PHP
-
-# Marcar archivos de documentación
-*.md linguist-documentation=true
-
-# Marcar archivos realmente generados
-jwt_token.txt linguist-generated=true
+# Evitar detección incorrecta de Hack
+public/toolbar.php linguist-language=PHP
+api/similares.php linguist-language=PHP
+config/config.php linguist-language=PHP
