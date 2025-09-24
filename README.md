@@ -9,11 +9,11 @@
 
 ---
 
-## 📋 Descripción Ejecutiva
+##  Descripción Ejecutiva
 
 **Sistema de Inmuebles Similares** es una aplicación web profesional desarrollada específicamente para el equipo de **arrendamientos** de Acrecer, integrada nativamente con **Bitrix24 CRM**. La aplicación permite buscar y seleccionar propiedades similares directamente desde las negociaciones de CRM, optimizando el proceso comercial y mejorando la experiencia del asesor.
 
-### 🎯 Objetivos del Sistema
+###  Objetivos del Sistema
 - **Eficiencia Operacional**: Reducir tiempo de búsqueda de inmuebles similares
 - **Integración Nativa**: Funcionar como pestaña dentro del CRM de Bitrix24
 - **Especialización**: Orientado exclusivamente al equipo de arrendamientos
